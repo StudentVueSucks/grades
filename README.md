@@ -1,18 +1,3 @@
-# To dos
-1. create assignment details when clicked (either a popup or built in the page similar to addAssignment)
-2. delete assignments using their index (if needed create ids for all of them seperate from gradebookId)
-
-# To run
-export NODE_OPTIONS=--openssl-legacy-provider
-npm start
-
-# package.json studentvue lines
-"studentvue": "^2.0.4",
-"studentvue": "github:Jshap06/studentvue.js",
-
-      "integrity": "sha512-j9Q+eB0wlBHroX0rViq+lsuBr2UkWdshtvPNsRsfmOkoKmMPogO8c6EDX8rRInaLXrTlfBurfnwkTKbcuesrRw==",
-
-
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
