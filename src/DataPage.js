@@ -42,7 +42,12 @@ function DataPage({list,
     const loadAddAssignmentPage = () => {
         setAddingAssignment(true);
         for (let i = 0; i < curClass.assignmentTypes.length; i++){
-            console.log(curClass.assignmentTypes[i].type + ": " + curClass.assignmentTypes[i].points.current + "/" + curClass.assignmentTypes[i].points.possible + " " + curClass.assignmentTypes[i].weight.standard.substring(0,curClass.assignmentTypes[i].weight.standard.length-1)/100 + "of total");
+            console.log(curClass.assignmentTypes[i].type + ": " + 
+                curClass.assignmentTypes[i].points.current + "/" + 
+                curClass.assignmentTypes[i].points.possible + " " + 
+                curClass.assignmentTypes[i].weight.standard.substring(
+                    0,curClass.assignmentTypes[i].weight.standard.length-1)/100
+                     + "of total");
         }
     }
 
@@ -62,17 +67,21 @@ function DataPage({list,
             let totalPointsPossible = 0;
             let rawGrade = 0;
             for (let i = 0; i < curClass.assignmentTypes.length; i++){
-                let weight = curClass.assignmentTypes[i].weight.standard.substring(0,curClass.assignmentTypes[i].weight.standard.length-1) / 100;
+                let weight = curClass.assignmentTypes[i].weight.standard.substring(0,
+                    curClass.assignmentTypes[i].weight.standard.length-1) / 100;
                 if (curClass.assignmentTypes[i].type === assignmentTypeSelected){
                     console.log("found");
-                    totalPointsScored = Number(curClass.assignmentTypes[i].points.current) + pointsScored;
-                    totalPointsPossible = Number(curClass.assignmentTypes[i].points.possible) + pointsPossible;
-                    rawGrade += (totalPointsScored / totalPointsPossible)*weight;
-                    console.log(curClass.assignmentTypes[i].type + ": " + totalPointsScored + "/" + totalPointsPossible + " " + weight);
+                    totalPointsScored = Number(curClass.assignmentTypes[i].points.current)
+                     + pointsScored;
+                    totalPointsPossible = Number(curClass.assignmentTypes[i].points.possible)
+                     + pointsPossible;
+                    rawGrade += (totalPointsScored / totalPointsPossible) * weight;
+                    console.log(curClass.assignmentTypes[i].type + ": " + 
+                        totalPointsScored + "/" + totalPointsPossible + " " + weight);
                 }
                 else {
-                    rawGrade += (Number(curClass.assignmentTypes[i].points.current) / Number(curClass.assignmentTypes[i].points.possible))*weight;
-                    console.log(curClass.assignmentTypes[i].type + ": " + curClass.assignmentTypes[i].points.current + "/" + curClass.assignmentTypes[i].points.possible + " " + weight);
+                    rawGrade += (Number(curClass.assignmentTypes[i].points.current) / 
+                    Number(curClass.assignmentTypes[i].points.possible)) * weight;
                 }
             }
             rawGrade *= 100;
@@ -98,7 +107,13 @@ function DataPage({list,
             else if (gradingScale.F !== null && rawGrade >= gradingScale.E[0] && rawGrade <= gradingScale.E[1]) {
                 letterGrade = "F";
             }
-            updateClass(curClass.id, rawGrade, letterGrade, assignmentTypeSelected, totalPointsScored, totalPointsPossible, finalList);
+            updateClass(curClass.id, 
+                rawGrade, 
+                letterGrade, 
+                assignmentTypeSelected, 
+                totalPointsScored, 
+                totalPointsPossible, 
+                finalList);
             setAddingAssignment(false);
         }
         else{
@@ -162,10 +177,12 @@ function DataPage({list,
                     textAlign: 'center',
                     color: 'white'
                 }}>{!showAssignments ? "Classes" : curClass.title}</h2>
-                {showAssignments ? <h2 style={{marginLeft: '10px', color: curClass.letterGrade.toLowerCase() === "a" ? 'lime' : 
-                    curClass.letterGrade.toLowerCase() === "b" ? 'orange' : 
-                    curClass.letterGrade.toLowerCase() === "c" ? 'yellow' : 
-                    curClass.letterGrade.toLowerCase() === "d" ? 'cyan' : 'red'}}>
+                {showAssignments ? <h2 style={{
+                    marginLeft: '10px', 
+                    color: curClass.letterGrade.toLowerCase() === "a" ? 'lime' : 
+                        curClass.letterGrade.toLowerCase() === "b" ? 'orange' : 
+                        curClass.letterGrade.toLowerCase() === "c" ? 'yellow' : 
+                        curClass.letterGrade.toLowerCase() === "d" ? 'cyan' : 'red'}}>
                         {curClass.letterGrade} {curClass.rawGrade}%</h2> : null}
             </div>
             <div style={{
@@ -249,7 +266,8 @@ function DataPage({list,
                 alignItems: 'center',
                 gap: '10px',}}>
                 {!addingAssignment ? 
-                    Array.isArray(assignmentList) && assignmentList.length > 0 ? (assignmentList.map((assignment, index) => (
+                    Array.isArray(assignmentList) && 
+                    assignmentList.length > 0 ? (assignmentList.map((assignment, index) => (
                     <div
                     key={index}
                     style={{
@@ -279,7 +297,10 @@ function DataPage({list,
 
                         }}>
                             <strong style={{color: '#d1c2a3'}}>{assignment.type}</strong>
-                            <strong style={{textAlign: 'end', justifyContent: 'end', marginLeft: '15px'}}>
+                            <strong style={{
+                                textAlign: 'end', 
+                                justifyContent: 'end', 
+                                marginLeft: '15px'}}>
                                 {assignment?.points || ""}
                             </strong>
                         </div>
@@ -294,9 +315,21 @@ function DataPage({list,
                         height: '100%',
                         width: '50%',
                     }}>
-                        <h2 style={{ textAlign: 'center', marginBottom: '20px', color: '#d1c2a3' }}>Add Assignment</h2>
-                        <div style={{ marginBottom: '15px', width: '50%' }}>
-                            <strong style={{ display: 'block', marginBottom: '5px', textAlign: 'left', color: '#d1c2a3', fontSize: '18px'}}>Name:</strong>
+                        <h2 style={{
+                            textAlign: 'center', 
+                            marginBottom: '20px', 
+                            color: '#d1c2a3' }}
+                            >Add Assignment</h2>
+                        <div style={{
+                            marginBottom: '15px', 
+                            width: '50%' }}>
+                            <strong style={{
+                                display: 'block', 
+                                marginBottom: '5px', 
+                                textAlign: 'left', 
+                                color: '#d1c2a3', 
+                                fontSize: '18px'}}
+                                >Name:</strong>
                             <input
                                 id="nameInput"
                                 type="text"
@@ -315,7 +348,13 @@ function DataPage({list,
                             />
                         </div>
                         <div style={{marginBottom: '15px', width: '50%'}}>
-                            <strong style={{ display: 'block', marginBottom: '5px', textAlign: 'left', color: '#d1c2a3', fontSize: '18px'}}>Points Scored:</strong>
+                            <strong style={{
+                                display: 'block', 
+                                marginBottom: '5px', 
+                                textAlign: 'left', 
+                                color: '#d1c2a3', 
+                                fontSize: '18px'}}
+                                >Points Scored:</strong>
                             <input
                                 type="number"
                                 id="pointsScoredInput"
@@ -332,8 +371,16 @@ function DataPage({list,
                                 }}
                             />
                         </div>
-                        <div style={{marginBottom: '15px', width: '50%'}}>
-                            <strong style={{ display: 'block', marginBottom: '5px', textAlign: 'left', color: '#d1c2a3', fontSize: '18px'}}>Points Possible:</strong>
+                        <div style={{
+                            marginBottom: '15px', 
+                            width: '50%'}}>
+                            <strong style={{
+                                display: 'block', 
+                                marginBottom: '5px', 
+                                textAlign: 'left', 
+                                color: '#d1c2a3', 
+                                fontSize: '18px'}}
+                                >Points Possible:</strong>
                             <input
                                 type="number"
                                 id="pointsPossibleInput"
@@ -354,7 +401,13 @@ function DataPage({list,
                             marginBottom: '15px',
                             width: '50%'
                         }}>
-                            <strong style={{ display: 'block', marginBottom: '5px', textAlign: 'left', color: '#d1c2a3', fontSize: '18px'}}>Assignment Type:</strong>
+                            <strong style={{
+                                display: 'block', 
+                                marginBottom: '5px', 
+                                textAlign: 'left', 
+                                color: '#d1c2a3', 
+                                fontSize: '18px'}}
+                                >Assignment Type:</strong>
                             <select
                                 value={assignmentTypeSelected}
                                 onChange={dropdownChange}
@@ -366,11 +419,7 @@ function DataPage({list,
                                     color: "#d1c2a3",
                                     fontSize: "16px",
                                     width: '100%'
-                                }}
-                            >
-                                {/* <option value="" disabled>
-                                    Select an option
-                                </option> */}
+                                }}>
                                 {curClass.assignmentTypes.map((option, index) => (
                                     <option key={index} value={option.type}>
                                         {option.type}
@@ -381,7 +430,13 @@ function DataPage({list,
                         <div style={{
                             width: '50%'
                         }}>
-                            <p hidden={!pointAmountError} style={{textAlign: 'center', color: 'red', fontSize: '18px', marginTop: '0px', marginBottom: '5px'}}>Point values not valid</p>
+                            <p hidden={!pointAmountError} style={{
+                                textAlign: 'center', 
+                                color: 'red', 
+                                fontSize: '18px', 
+                                marginTop: '0px', 
+                                marginBottom: '5px'}}
+                                >Point values not valid</p>
                             <button 
                             onClick={addAssignment}
                             style={{

@@ -34,8 +34,16 @@ function App() {
   const [gradingScale, setGradingScale] = useState();
   const [pointAmountError, setPointAmountError] = useState(false);
 
-  const updateClass = (id, rawGrade, letterGrade, assignmentType, assignmentTypePoints, assignmentTypePointsPossible, assignments) => {
+  const updateClass = (
+    id, 
+    rawGrade, 
+    letterGrade, 
+    assignmentType, 
+    assignmentTypePoints, 
+    assignmentTypePointsPossible, 
+    assignments) => {
     let outputListUpdated = outputList;
+    
     for (let i = 0; i < outputListUpdated.length; i++){
       if (outputListUpdated[i].id === id){
         outputListUpdated[i].rawGrade = rawGrade;
@@ -53,6 +61,7 @@ function App() {
         break;
       }
     }
+
     setAssignmentList(assignments);
     setOutputList(outputListUpdated);
   };
@@ -61,20 +70,23 @@ function App() {
     setLoading(true);
     setShowAssignments(false);
     setError(false);
+
     let accUser = user === null ? username : user;
     let accPass = pass === null ? password : pass;
-    // console.log("user: " + accUser);
-    // console.log("pass: " + accPass);
+
     const client = await getAcc(accUser, accPass);
-    // console.log(client);
+
     if (client != null){
       const gradebook = await client[0].gradebook();
       setGradingScale(gradebook.gradingScale);
+
       let classList = [];
+
       for (let i = 0; i < gradebook.courses.length; i++){
         let add = gradebook.courses[i];
         let weights = add.marks[0]?.weightedCategories;
         let filteredWeights = [];
+
         for (let i = 0; i < weights.length; i++){
           if (weights[i].type.toLowerCase().trim() !== "total"){
             filteredWeights.push(weights[i]);
@@ -87,6 +99,7 @@ function App() {
           assignments: add.marks[0]?.assignments || [],
           assignmentTypes: filteredWeights});
       }
+
       setOutputList(classList);
       setDataPage(true);
     }
@@ -102,7 +115,8 @@ function App() {
         setUsername(document.getElementById('usernameInput').value);
         setPassword(document.getElementById('passwordInput').value);
 
-        await onLogin(document.getElementById('usernameInput').value, document.getElementById('passwordInput').value);
+        await onLogin(document.getElementById('usernameInput').value, 
+        document.getElementById('passwordInput').value);
       }
     };
 
@@ -154,7 +168,11 @@ function App() {
       <header className="App-header">
         <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Sign In</h2>
         <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', textAlign: 'left' }}>ID:</label>
+          <label style={{ 
+            display: 'block',
+            marginBottom: '5px', 
+            textAlign: 'left' }}
+            >ID:</label>
           <input
             id='usernameInput'
             type="text"
@@ -173,7 +191,11 @@ function App() {
           />
         </div>
         <div style={{marginBottom: '10px'}}>
-          <label style={{ display: 'block', marginBottom: '5px', textAlign: 'left' }}>Password:</label>
+          <label style={{
+            display: 'block', 
+            marginBottom: '5px', 
+            textAlign: 'left' }}
+            >Password:</label>
           <input
             id='passwordInput'
             type="password"
@@ -191,7 +213,13 @@ function App() {
             }}
           />
         </div>
-        <p hidden={!isError} style={{textAlign: 'center', color: 'red', fontSize: '18px', marginTop: '0px', marginBottom: '0px'}}>Incorrect ID or Password</p>
+        <p hidden={!isError} style={{
+          textAlign: 'center', 
+          color: 'red', 
+          fontSize: '18px', 
+          marginTop: '0px', 
+          marginBottom: '0px'}}
+          >Incorrect ID or Password</p>
         {isLoading ? (<Spinner/>) : (<button
           onClick={() => onLogin(username, password)}
           style={{
