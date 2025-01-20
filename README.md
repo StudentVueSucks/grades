@@ -1,6 +1,6 @@
 # To dos
-create assignment details when clicked (either a popup or built in the page similar to addAssignment)
-delete assignments using their index (if needed create ids for all of them seperate from gradebookId)
+1. create assignment details when clicked (either a popup or built in the page similar to addAssignment)
+2. delete assignments using their index (if needed create ids for all of them seperate from gradebookId)
 
 # To run
 export NODE_OPTIONS=--openssl-legacy-provider
