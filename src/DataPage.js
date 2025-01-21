@@ -55,7 +55,7 @@ function DataPage({list,
         setPointAmountError(false);
         let pointsScored = Number(document.getElementById('pointsScoredInput').value);
         let pointsPossible = Number(document.getElementById('pointsPossibleInput').value);
-        if (pointsScored > 0 && pointsPossible > 0 && pointsScored <= pointsPossible){
+        if (pointsScored >= 0 && pointsPossible >= 0 && pointsScored <= pointsPossible){
             let newAssignment = {
                 name: document.getElementById('nameInput').value, 
                 points: pointsScored + " / " + pointsPossible,
