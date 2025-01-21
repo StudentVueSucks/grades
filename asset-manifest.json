@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/grade-app/static/css/main.e7c52787.css",
+    "main.js": "/grade-app/static/js/main.5d8e5ae7.js",
+    "static/js/488.f0507e71.chunk.js": "/grade-app/static/js/488.f0507e71.chunk.js",
+    "static/media/axios.cjs": "/grade-app/static/media/axios.693cfcc9e5223535a0dc.cjs",
+    "index.html": "/grade-app/index.html",
+    "main.e7c52787.css.map": "/grade-app/static/css/main.e7c52787.css.map",
+    "main.5d8e5ae7.js.map": "/grade-app/static/js/main.5d8e5ae7.js.map",
+    "488.f0507e71.chunk.js.map": "/grade-app/static/js/488.f0507e71.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e7c52787.css",
+    "static/js/main.5d8e5ae7.js"
+  ]
+}
