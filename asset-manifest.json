@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/grade-app/static/css/main.e7c52787.css",
-    "main.js": "/grade-app/static/js/main.7599abb8.js",
-    "static/js/488.f0507e71.chunk.js": "/grade-app/static/js/488.f0507e71.chunk.js",
-    "static/media/axios.cjs": "/grade-app/static/media/axios.693cfcc9e5223535a0dc.cjs",
-    "index.html": "/grade-app/index.html",
-    "main.e7c52787.css.map": "/grade-app/static/css/main.e7c52787.css.map",
-    "main.7599abb8.js.map": "/grade-app/static/js/main.7599abb8.js.map",
-    "488.f0507e71.chunk.js.map": "/grade-app/static/js/488.f0507e71.chunk.js.map"
+    "main.css": "/grades/static/css/main.e7c52787.css",
+    "main.js": "/grades/static/js/main.ab312977.js",
+    "static/js/488.f0507e71.chunk.js": "/grades/static/js/488.f0507e71.chunk.js",
+    "static/media/axios.cjs": "/grades/static/media/axios.693cfcc9e5223535a0dc.cjs",
+    "index.html": "/grades/index.html",
+    "main.e7c52787.css.map": "/grades/static/css/main.e7c52787.css.map",
+    "main.ab312977.js.map": "/grades/static/js/main.ab312977.js.map",
+    "488.f0507e71.chunk.js.map": "/grades/static/js/488.f0507e71.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.e7c52787.css",
-    "static/js/main.7599abb8.js"
+    "static/js/main.ab312977.js"
   ]
 }
