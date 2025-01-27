@@ -1,5 +1,5 @@
 import './App.css';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import StudentVue from "studentvue";
 import Spinner from './Spinner';
 import DataPage from './DataPage';
@@ -27,10 +27,14 @@ function App() {
   const [isLoading, setLoading] = useState(false);
   const [loadDataPage, setDataPage] = useState(false);
   const [showAssignments, setShowAssignments] = useState(false);
+  const [showAssignmentDetail, setShowAssignmentDetail] = useState(false);
   const [assignmentList, setAssignmentList] = useState([]);
   const [curClass, setCurClass] = useState();
+  const [curAssignment, setCurAssignment] = useState();
+  const [curAssignmentIndex, setCurAssignmentIndex] = useState();
   const [addingAssignment, setAddingAssignment] = useState(false);
   const [assignmentTypeSelected, setAssignmentTypeSelected] = useState('');
+  const [editAssignmentTypeSelected, setEditAssignmentTypeSelected] = useState('');
   const [gradingScale, setGradingScale] = useState();
   const [pointAmountError, setPointAmountError] = useState(false);
 
@@ -41,20 +45,37 @@ function App() {
     assignmentType, 
     assignmentTypePoints, 
     assignmentTypePointsPossible, 
+    assignmentTypePointsOld, 
+    assignmentTypePointsPossibleOld, 
+    oldAssignmentType,
     assignments) => {
     let outputListUpdated = outputList;
     
     for (let i = 0; i < outputListUpdated.length; i++){
       if (outputListUpdated[i].id === id){
-        outputListUpdated[i].rawGrade = rawGrade;
+        if (rawGrade !== ""){
+          outputListUpdated[i].rawGrade = rawGrade;
+        }
         if (letterGrade !== ""){
           outputListUpdated[i].letterGrade = letterGrade;
         }
         outputListUpdated[i].assignments = assignments;
         for (let j = 0; j < outputListUpdated[i].assignmentTypes.length; j++){
           if (outputListUpdated[i].assignmentTypes[j].type === assignmentType){
-            outputListUpdated[i].assignmentTypes[j].points.current = assignmentTypePoints;
-            outputListUpdated[i].assignmentTypes[j].points.possible = assignmentTypePointsPossible;
+            if (assignmentTypePoints !== ""){
+              outputListUpdated[i].assignmentTypes[j].points.current = assignmentTypePoints;
+            }
+            if (assignmentTypePointsPossible !== ""){
+              outputListUpdated[i].assignmentTypes[j].points.possible = assignmentTypePointsPossible;
+            }
+          }
+          else if (oldAssignmentType !== "" && outputListUpdated[i].assignmentTypes[j].type === oldAssignmentType){
+            if (assignmentTypePointsOld !== ""){
+              outputListUpdated[i].assignmentTypes[j].points.current = assignmentTypePointsOld;
+            }
+            if (assignmentTypePointsPossibleOld !== ""){
+              outputListUpdated[i].assignmentTypes[j].points.possible = assignmentTypePointsPossibleOld;
+            }
           }
         }
         setCurClass(outputListUpdated[i]);
@@ -66,7 +87,7 @@ function App() {
     setOutputList(outputListUpdated);
   };
 
-  const onLogin = async (user, pass) => {
+  const onLogin = useCallback(async (user, pass) => {
     setLoading(true);
     setShowAssignments(false);
     setError(false);
@@ -107,7 +128,7 @@ function App() {
       setError(true);
     }
     setLoading(false);
-  };
+  }, [username, password]);
 
   useEffect(() => {
     const handleKeyPress = async (event) => {
@@ -125,7 +146,7 @@ function App() {
     return () => {
       document.removeEventListener("keydown", handleKeyPress);
     };
-  }, []);
+  }, [onLogin]);
 
   const containerStyle = {
     display: 'flex',          
@@ -161,7 +182,15 @@ function App() {
         setAssignmentTypeSelected={setAssignmentTypeSelected}
         gradingScale={gradingScale}
         pointAmountError={pointAmountError}
-        setPointAmountError={setPointAmountError}/>
+        setPointAmountError={setPointAmountError}
+        showAssignmentDetail={showAssignmentDetail}
+        setShowAssignmentDetail={setShowAssignmentDetail}
+        curAssignment={curAssignment}
+        setCurAssignment={setCurAssignment}
+        curAssignmentIndex={curAssignmentIndex}
+        setCurAssignmentIndex={setCurAssignmentIndex}
+        editAssignmentTypeSelected={editAssignmentTypeSelected}
+        setEditAssignmentTypeSelected={setEditAssignmentTypeSelected}/>
       </div>
     ) : (
       <div style={mainDivStyle}>
