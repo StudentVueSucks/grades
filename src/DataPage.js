@@ -161,7 +161,9 @@ function DataPage({list,
             if (endIndex === -1){
                 endIndex = str.indexOf("/");
             }
-            val = str.substring(0,endIndex);
+            if (str.indexOf("/") !== 0){
+                val = str.substring(0,endIndex);
+            }
         }
         return val;
     }
@@ -175,6 +177,14 @@ function DataPage({list,
                 break;
             }
         }
+        return val;
+    }
+
+    const hasPoints = (points) => {
+        let val = false;
+        if (getCurPoints(points) !== '' && getCurPointsPossible !== ''){
+            val = true;
+        }  
         return val;
     }
 
@@ -303,7 +313,7 @@ function DataPage({list,
         }
         else{
             //check if it didn't have points before first
-            if (curAssignmentPoints.trim().indexOf("/") === -1 && (pointsScored === 0 && pointsPossible === 0)){
+            if (!hasPoints(curAssignmentPoints) && (pointsScored === 0 && pointsPossible === 0)){
                 //save without recalculating grade
                 let newAssignmentList = [];
                 newAssignmentList = newAssignmentList.concat(assignmentList);
@@ -339,7 +349,7 @@ function DataPage({list,
             newAssignmentList = newAssignmentList.concat(assignmentList);
             newAssignmentList.splice(curAssignmentIndex, 1);
 
-        if (curAssignmentPoints.trim().indexOf("/") === -1){
+        if (!hasPoints(curAssignmentPoints)){
             //update assignments but not grade
             updateClass(curClass.id, 
                 '', 
