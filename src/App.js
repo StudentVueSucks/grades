@@ -37,6 +37,23 @@ function App() {
   const [editAssignmentTypeSelected, setEditAssignmentTypeSelected] = useState('');
   const [gradingScale, setGradingScale] = useState();
   const [pointAmountError, setPointAmountError] = useState(false);
+  const [classHover, setClassHover] = useState([]);
+  const [assignmentHover, setAssignmentHover] = useState([]);
+  const [reportingPeriods, setReportingPeriods] = useState([]);
+  const [curReportingPeriod, setCurReportingPeriod] = useState();
+  const [curReportingPeriodIndex, setCurReportingPeriodIndex] = useState();
+  const [isChangeLoading, setChangeLoading] = useState(false);
+  const [periodHover, setPeriodHover] = useState(false);
+  const [backButtonHover, setBackButtonHover] = useState(false);
+  const [addAssignmentHover, setAddAssignmentHover] = useState(false);
+  const [assignmentTypeHover, setAssignmentTypeHover] = useState(false);
+  const [editAssignmentTypeHover, setEditAssignmentTypeHover] = useState(false);
+  const [loginHover, setLoginHover] = useState(false);
+  const [addButtonHover, setAddButtonHover] = useState(false);
+  const [saveButtonHover, setSaveButtonHover] = useState(false);
+  const [deleteButtonHover, setDeleteButtonHover] = useState(false);
+
+
 
   const updateClass = (
     id, 
@@ -87,19 +104,28 @@ function App() {
     setOutputList(outputListUpdated);
   };
 
-  const onLogin = useCallback(async (user, pass) => {
+  const onLogin = useCallback(async (user, pass, reportingPeriodIndex) => {
     setLoading(true);
     setShowAssignments(false);
     setError(false);
 
     let accUser = user === null ? username : user;
     let accPass = pass === null ? password : pass;
+    setUsername(user);
+    setPassword(pass);
 
     const client = await getAcc(accUser, accPass);
 
     if (client != null){
-      const gradebook = await client[0].gradebook();
+      let curPeriod;
+      if (reportingPeriodIndex !== undefined){
+        curPeriod = reportingPeriodIndex;
+      }
+      const gradebook = await client[0].gradebook(curPeriod);
       setGradingScale(gradebook.gradingScale);
+      setReportingPeriods(gradebook.reportingPeriod.available);
+      setCurReportingPeriod(gradebook.reportingPeriod.current.name);
+      setCurReportingPeriodIndex(gradebook.reportingPeriod.current.index);
 
       let classList = [];
 
@@ -114,14 +140,40 @@ function App() {
           }
         }
         
+        let letterGrade = add.marks[0]?.calculatedScore?.string;
+        let rawGrade = add.marks[0]?.calculatedScore?.raw;
+        let gradingScale = gradebook.gradingScale;
+        if (letterGrade === "" || letterGrade === undefined || letterGrade === null || !isNaN(letterGrade)){
+          //calculate letter grade
+          if (gradingScale.A !== null && rawGrade >= gradingScale.A[0] && rawGrade <= gradingScale.A[1]){
+            letterGrade = "A";
+          }
+          else if (gradingScale.B !== null && rawGrade >= gradingScale.B[0] && rawGrade <= gradingScale.B[1]){
+              letterGrade = "B";
+          }
+          else if (gradingScale.C !== null && rawGrade >= gradingScale.C[0] && rawGrade <= gradingScale.C[1]){
+              letterGrade = "C";
+          }
+          else if (gradingScale.D !== null && rawGrade >= gradingScale.D[0] && rawGrade <= gradingScale.D[1]){
+              letterGrade = "D";
+          }
+          else if (gradingScale.E !== null && rawGrade >= gradingScale.E[0] && rawGrade <= gradingScale.E[1]){
+              letterGrade = "E";
+          }
+          else if (gradingScale.F !== null && rawGrade >= gradingScale.E[0] && rawGrade <= gradingScale.E[1]) {
+              letterGrade = "F";
+          }
+        }
+
         classList.push({id: i >=4 ? i + 2 : i + 1, title: add.title, 
-          letterGrade: add.marks[0]?.calculatedScore?.string || "N/A",
-          rawGrade: add.marks[0]?.calculatedScore?.raw || 0,
+          letterGrade: letterGrade || "N/A",
+          rawGrade: rawGrade || 0,
           assignments: add.marks[0]?.assignments || [],
           assignmentTypes: filteredWeights});
       }
 
       setOutputList(classList);
+      setClassHover(classList.map(() => false));
       setDataPage(true);
     }
     else{
@@ -167,7 +219,7 @@ function App() {
     <div className="App" style={containerStyle}>
     {loadDataPage ? (
       <div style={mainDivStyle}>
-        <DataPage list={outputList} 
+        <DataPage classList={outputList} 
         showAssignments={showAssignments} 
         setShowAssignments={setShowAssignments} 
         assignmentList={assignmentList} 
@@ -190,7 +242,38 @@ function App() {
         curAssignmentIndex={curAssignmentIndex}
         setCurAssignmentIndex={setCurAssignmentIndex}
         editAssignmentTypeSelected={editAssignmentTypeSelected}
-        setEditAssignmentTypeSelected={setEditAssignmentTypeSelected}/>
+        setEditAssignmentTypeSelected={setEditAssignmentTypeSelected}
+        classHover={classHover}
+        setClassHover={setClassHover}
+        assignmentHover={assignmentHover}
+        setAssignmentHover={setAssignmentHover}
+        reportingPeriods={reportingPeriods}
+        setCurReportingPeriod={setCurReportingPeriod}
+        curReportingPeriod={curReportingPeriod}
+        setCurReportingPeriodIndex={setCurReportingPeriodIndex}
+        curReportingPeriodIndex={curReportingPeriodIndex}
+        onLogin={onLogin}
+        username={username}
+        password={password}
+        isChangeLoading={isChangeLoading}
+        setChangeLoading={setChangeLoading}
+        periodHover={periodHover}
+        setPeriodHover={setPeriodHover}
+        backButtonHover={backButtonHover}
+        setBackButtonHover={setBackButtonHover}
+        addAssignmentHover={addAssignmentHover}
+        setAddAssignmentHover={setAddAssignmentHover}
+        assignmentTypeHover={assignmentTypeHover}
+        setAssignmentTypeHover={setAssignmentTypeHover}
+        editAssignmentTypeHover={editAssignmentTypeHover}
+        setEditAssignmentTypeHover={setEditAssignmentTypeHover}
+        addButtonHover={addButtonHover}
+        setAddButtonHover={setAddButtonHover}
+        saveButtonHover={saveButtonHover}
+        setSaveButtonHover={setSaveButtonHover}
+        deleteButtonHover={deleteButtonHover}
+        setDeleteButtonHover={setDeleteButtonHover}
+        />
       </div>
     ) : (
       <div style={mainDivStyle}>
@@ -251,16 +334,19 @@ function App() {
           >Incorrect ID or Password</p>
         {isLoading ? (<Spinner/>) : (<button
           onClick={() => onLogin(username, password)}
+          onMouseEnter={() => setLoginHover(true)}
+          onMouseLeave={() => setLoginHover(false)}
           style={{
             width: '150px',
             padding: '10px',
-            backgroundColor: '#d1c2a3',
+            backgroundColor: loginHover ? '#e0d4b4' : '#d1c2a3',
             color: '#5b6476',
             fontSize: '16px',
             border: 'none',
             borderRadius: '8px',
             cursor: 'pointer',
-            marginTop: '10px'
+            marginTop: '10px',
+            transition: 'background-color 0.3s ease',
           }}
         >
           Login

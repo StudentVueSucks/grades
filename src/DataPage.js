@@ -1,6 +1,7 @@
 import React from "react";
+import Spinner from "./Spinner";
 
-function DataPage({list, 
+function DataPage({classList, 
     showAssignments, 
     setShowAssignments, 
     assignmentList, 
@@ -23,13 +24,55 @@ function DataPage({list,
     curAssignmentIndex,
     setCurAssignmentIndex,
     editAssignmentTypeSelected,
-    setEditAssignmentTypeSelected
+    setEditAssignmentTypeSelected,
+    classHover,
+    setClassHover,
+    assignmentHover,
+    setAssignmentHover,
+    reportingPeriods,
+    curReportingPeriod,
+    setCurReportingPeriod,
+    curReportingPeriodIndex,
+    setCurReportingPeriodIndex,
+    onLogin,
+    username,
+    password,
+    isChangeLoading,
+    setChangeLoading,
+    periodHover,
+    setPeriodHover,
+    backButtonHover,
+    setBackButtonHover,
+    addAssignmentHover,
+    setAddAssignmentHover,
+    assignmentTypeHover,
+    setAssignmentTypeHover,
+    editAssignmentTypeHover,
+    setEditAssignmentTypeHover,
+    addButtonHover,
+    setAddButtonHover,
+    saveButtonHover,
+    setSaveButtonHover,
+    deleteButtonHover,
+    setDeleteButtonHover,
     }){
+
+    const dateToString = (date) => {
+        if (date !== undefined && date !== null){
+            const month = date.getMonth() + 1; // Months are zero-indexed
+            const day = date.getDate();
+            const year = date.getFullYear();
+            
+            return `${month}/${day}/${year}`;
+        }
+        return 'No Date';
+    };
 
     const onClassClick = ({item}) => {
         setCurClass(item);
         setAssignmentList(item.assignments);
         setAssignmentTypeSelected(item.assignmentTypes[0].type);
+        setAssignmentHover(assignmentList.map(() => false));
         setShowAssignments(true);
     };
 
@@ -71,13 +114,17 @@ function DataPage({list,
             let newAssignment = {
                 name: document.getElementById('nameInput').value, 
                 points: pointsScored + " / " + pointsPossible,
-                type: assignmentTypeSelected};
+                type: assignmentTypeSelected,
+                date: {
+                    due: new Date(Date.now())
+                }};
             let newAssignmentList = [newAssignment];
             let finalList = newAssignmentList.concat(assignmentList);
             // Calculate new grade
             let totalPointsScored = 0;
             let totalPointsPossible = 0;
             let rawGrade = 0;
+            let emptyAssignmentTypeWeights = 0;
             for (let i = 0; i < curClass.assignmentTypes.length; i++){
                 let weight = curClass.assignmentTypes[i].weight.standard.substring(0,
                     curClass.assignmentTypes[i].weight.standard.length-1) / 100;
@@ -86,14 +133,27 @@ function DataPage({list,
                      + pointsScored;
                     totalPointsPossible = Number(curClass.assignmentTypes[i].points.possible)
                      + pointsPossible;
-                    rawGrade += (totalPointsScored / totalPointsPossible) * weight;
-                    console.log(curClass.assignmentTypes[i].type + ": " + 
-                        totalPointsScored + "/" + totalPointsPossible + " " + weight);
+                    if (totalPointsPossible !== 0){
+                        rawGrade += (totalPointsScored / totalPointsPossible) * weight;
+                    }
+                    else {
+                        emptyAssignmentTypeWeights += weight;
+                    }
                 }
                 else {
-                    rawGrade += (Number(curClass.assignmentTypes[i].points.current) / 
-                    Number(curClass.assignmentTypes[i].points.possible)) * weight;
+                    let cur = Number(curClass.assignmentTypes[i].points.current);
+                    let pos = Number(curClass.assignmentTypes[i].points.possible);
+                    if (pos !== 0){
+                        rawGrade += (cur / pos) * weight;
+                    }
+                    else {
+                        emptyAssignmentTypeWeights += weight;
+                    }
                 }
+            }
+
+            if (emptyAssignmentTypeWeights !== 0 && emptyAssignmentTypeWeights !== 1){
+                rawGrade *= 1 / (1 - (emptyAssignmentTypeWeights));
             }
             rawGrade *= 100;
             rawGrade = rawGrade.toFixed(2);
@@ -128,6 +188,7 @@ function DataPage({list,
                 "",
                 "",
                 finalList);
+            setAssignmentHover(assignmentList.map(() => false));
             setAddingAssignment(false);
         }
         else{
@@ -215,6 +276,7 @@ function DataPage({list,
             let totalPointsPossibleOld = "";
             let rawGrade = "";
             let letterGrade = "";
+            let emptyAssignmentTypeWeights = 0;
             if (curAssignmentPoints !== pointsScored + " / " + pointsPossible || curAssignmentType !== editAssignmentTypeSelected){
                 // Calculate new grade
                 totalPointsScored = 0;
@@ -231,13 +293,22 @@ function DataPage({list,
                                 + pointsScoredDif;
                             totalPointsPossible = Number(curClass.assignmentTypes[i].points.possible)
                                 + pointsPossibleDif;
-                            rawGrade += (totalPointsScored / totalPointsPossible) * weight;
-                            console.log(curClass.assignmentTypes[i].type + ": " + 
-                                totalPointsScored + "/" + totalPointsPossible + " " + weight);
+                            if (totalPointsPossible !== 0){
+                                rawGrade += (totalPointsScored / totalPointsPossible) * weight;
+                            }
+                            else {
+                                emptyAssignmentTypeWeights += weight;
+                            }
                         }
                         else {
-                            rawGrade += (Number(curClass.assignmentTypes[i].points.current) / 
-                            Number(curClass.assignmentTypes[i].points.possible)) * weight;
+                            let cur = Number(curClass.assignmentTypes[i].points.current);
+                            let pos = Number(curClass.assignmentTypes[i].points.possible);
+                            if (pos !== 0){
+                                rawGrade += (cur / pos) * weight;
+                            }
+                            else {
+                                emptyAssignmentTypeWeights += weight;
+                            }
                         }
                     }
                 }
@@ -250,24 +321,41 @@ function DataPage({list,
                                 + pointsScored;
                             totalPointsPossible = Number(curClass.assignmentTypes[i].points.possible)
                                 + pointsPossible;
-                            rawGrade += (totalPointsScored / totalPointsPossible) * weight;
-                            console.log(curClass.assignmentTypes[i].type + ": " + 
-                                totalPointsScored + "/" + totalPointsPossible + " " + weight);
+                            if (totalPointsPossible !== 0){
+                                rawGrade += (totalPointsScored / totalPointsPossible) * weight;
+                            }
+                            else {
+                                emptyAssignmentTypeWeights += weight;
+                            }
                         }
                         else if (curClass.assignmentTypes[i].type === curAssignmentType){
                             totalPointsScoredOld = Number(curClass.assignmentTypes[i].points.current)
                                 - getCurPoints(curAssignmentPoints);
                             totalPointsPossibleOld = Number(curClass.assignmentTypes[i].points.possible)
                                 - getCurPointsPossible(curAssignmentPoints);
-                            rawGrade += (totalPointsScoredOld / totalPointsPossibleOld) * weight;
+                            if (totalPointsPossibleOld !== 0){
+                                rawGrade += (totalPointsScoredOld / totalPointsPossibleOld) * weight;
+                            }
+                            else {
+                                emptyAssignmentTypeWeights += weight;
+                            }
                         }
                         else{
-                            rawGrade += (Number(curClass.assignmentTypes[i].points.current) / 
-                            Number(curClass.assignmentTypes[i].points.possible)) * weight;
+                            let cur = Number(curClass.assignmentTypes[i].points.current);
+                            let pos = Number(curClass.assignmentTypes[i].points.possible);
+                            if (pos !== 0){
+                                rawGrade += (cur / pos) * weight;
+                            }
+                            else {
+                                emptyAssignmentTypeWeights += weight;
+                            }
                         }
                     }
                 }
                 
+                if (emptyAssignmentTypeWeights !== 0 && emptyAssignmentTypeWeights !== 1){
+                    rawGrade *= 1 / (1 - (emptyAssignmentTypeWeights));
+                }
                 rawGrade *= 100;
                 rawGrade = rawGrade.toFixed(2);
                 console.log("new grade: " + rawGrade);
@@ -309,6 +397,7 @@ function DataPage({list,
                 totalPointsPossibleOld,
                 curAssignmentType,
                 newAssignmentList);
+            setAssignmentHover(assignmentList.map(() => false));
             setShowAssignmentDetail(false);
         }
         else{
@@ -371,6 +460,7 @@ function DataPage({list,
             let totalPointsScored = 0;
             let totalPointsPossible = 0;
             let rawGrade = 0;
+            let emptyAssignmentTypeWeights = 0;
             for (let i = 0; i < curClass.assignmentTypes.length; i++){
                 let weight = curClass.assignmentTypes[i].weight.standard.substring(0,
                     curClass.assignmentTypes[i].weight.standard.length-1) / 100;
@@ -379,16 +469,28 @@ function DataPage({list,
                         - pointsScored;
                     totalPointsPossible = Number(curClass.assignmentTypes[i].points.possible)
                         - pointsPossible;
-                    rawGrade += (totalPointsScored / totalPointsPossible) * weight;
-                    // console.log(curClass.assignmentTypes[i].type + ": " + 
-                    //     totalPointsScored + "/" + totalPointsPossible + " " + weight);
+                    if (totalPointsPossible !== 0){
+                        rawGrade += (totalPointsScored / totalPointsPossible) * weight;
+                    }
+                    else {
+                        emptyAssignmentTypeWeights += weight;
+                    }
                 }
                 else {
-                    rawGrade += (Number(curClass.assignmentTypes[i].points.current) / 
-                    Number(curClass.assignmentTypes[i].points.possible)) * weight;
+                    let cur = Number(curClass.assignmentTypes[i].points.current);
+                    let pos = Number(curClass.assignmentTypes[i].points.possible);
+                    if (pos !== 0){
+                        rawGrade += (cur / pos) * weight;
+                    }
+                    else {
+                        emptyAssignmentTypeWeights += weight;
+                    }
                 }
             }
             
+            if (emptyAssignmentTypeWeights !== 0 && emptyAssignmentTypeWeights !== 1){
+                rawGrade *= 1 / (1 - (emptyAssignmentTypeWeights));
+            }
             rawGrade *= 100;
             rawGrade = rawGrade.toFixed(2);
             console.log("new grade: " + rawGrade);
@@ -424,8 +526,48 @@ function DataPage({list,
                 '',
                 newAssignmentList);
         }
+        setAssignmentHover(assignmentList.map(() => false));
         setShowAssignmentDetail(false);
     }
+
+    const handleMouseEnterClass = (index) => {
+        // const updatedStates = [...classHover];
+        const updatedStates = new Array(classHover.length).fill(false);
+        updatedStates[index] = true;
+        setClassHover(updatedStates);
+    };
+    
+    const handleMouseLeaveClass = (index) => {
+        const updatedStates = [...classHover];
+        updatedStates[index] = false;
+        setClassHover(updatedStates);
+    };
+
+    const handleMouseEnterAssignment = (index) => {
+        // const updatedStates = [...assignmentHover];
+        const updatedStates = new Array(assignmentHover.length).fill(false);
+        updatedStates[index] = true;
+        setAssignmentHover(updatedStates);
+    };
+    
+    const handleMouseLeaveAssignment = (index) => {
+        const updatedStates = [...assignmentHover];
+        updatedStates[index] = false;
+        setAssignmentHover(updatedStates);
+    };
+
+    const reportingPeriodDropdownChange = async (event) => {
+        setChangeLoading(true);
+        const value = event.target.value;
+        const index = event.target.selectedIndex;
+        setCurReportingPeriod(value);
+        setCurReportingPeriodIndex(index);
+        await onLogin(username, password, index);
+        setLoadDataPage(true);
+        setAddingAssignment(false);
+        setShowAssignmentDetail(false);
+        setChangeLoading(false);
+    };
 
     console.log("rendered");
     console.log("assignmentList: " + assignmentList);
@@ -449,74 +591,136 @@ function DataPage({list,
         }}
         >
             <div style={{
-                flex: 1,
-                justifyContent: "flex-start",
-                display: "flex"
+                flex: 9,
+                display: 'flex',
+                alignItems: 'center',
+                backgroundColor: 'transparent'
             }}>
-                <button style={{
-                    backgroundColor: '#d1c2a3',
-                    border: 'none',
-                    color: '#5b6476',
-                    textAlign: 'left',
-                    cursor: 'pointer',
-                    fontSize: '16px',
-                    borderRadius: '5px',
-                    padding: '5px 10px',
-                    margin: '10px'
-                }}
-                    onClick={onBackClick}
-                    >{showAssignments ? "Back" : "Sign out"}</button>
+                <div style={{
+                    flex: 1,
+                    justifyContent: "flex-start",
+                    display: "flex",
+                    backgroundColor: 'transparent'
+                }}>
+                    <button 
+                        onMouseEnter={() => setBackButtonHover(true)}
+                        onMouseLeave={() => setBackButtonHover(false)}
+                        style={{
+                            backgroundColor: backButtonHover ? '#e0d4b4' : '#d1c2a3',
+                            border: 'none',
+                            color: '#5b6476',
+                            textAlign: 'left',
+                            cursor: 'pointer',
+                            fontSize: '16px',
+                            borderRadius: '5px',
+                            padding: '5px 10px',
+                            margin: '10px',
+                            transition: 'background-color 0.3s ease',
+                    }}
+                        onClick={onBackClick}
+                        >{showAssignments ? "Back" : "Sign out"}</button>
+                </div>
+                <div style={{
+                    flex: 2,
+                    justifyContent: "flex-end",
+                    display: 'flex',
+                    alignItems: 'center',
+                    // backgroundColor: 'orange'
+                }}>
+                    {!showAssignmentDetail && !addingAssignment ? <select
+                        value={curReportingPeriod}
+                        onChange={reportingPeriodDropdownChange}
+                        onMouseEnter={() => setPeriodHover(true)}
+                        onMouseLeave={() => setPeriodHover(false)}
+                        style={{
+                            padding: "8px",
+                            borderRadius: "5px",
+                            border: "2px solid #d1c2a3",
+                            backgroundColor: periodHover ? '#6a7586' : 'transparent',
+                            color: "#d1c2a3",
+                            fontSize: "16px",
+                            maxWidth: '100%',
+                            width: '60%',
+                            cursor: 'pointer',
+                            transition: 'background-color 0.3s ease',
+                        }}>
+                        {reportingPeriods.map((option, index) => (
+                            <option key={index} value={option.name}>
+                                {option.name}
+                            </option>
+                        ))}
+                    </select> : null}
+                </div>
+                <div style={{
+                    flex: 6,
+                    justifyContent: "center",
+                    display: "flex",
+                    alignItems: 'center',
+                    backgroundColor: 'transparent',
+                    textAlign: 'center'
+                }}>
+                    <h2 style={{
+                            margin: 0,
+                            textAlign: 'center',
+                            color: 'white'
+                        }}>{!showAssignments ? "Classes" : curClass.title}</h2>
+                        {showAssignments ? <h2 style={{
+                            marginLeft: '10px', 
+                            color: curClass.letterGrade.toLowerCase() === "a" ? 'lime' : 
+                                curClass.letterGrade.toLowerCase() === "b" ? 'orange' : 
+                                curClass.letterGrade.toLowerCase() === "c" ? 'yellow' : 
+                                curClass.letterGrade.toLowerCase() === "d" ? 'cyan' : 'red'}}>
+                                {curClass.letterGrade} {curClass.rawGrade}%</h2> : null}
+                </div>
             </div>
+            
             <div style={{
-                flex: 4,
-                justifyContent: "center",
-                display: "flex",
-                alignItems: 'center'
-            }}>
-                 <h2 style={{
-                    margin: 0,
-                    textAlign: 'center',
-                    color: 'white'
-                }}>{!showAssignments ? "Classes" : curClass.title}</h2>
-                {showAssignments ? <h2 style={{
-                    marginLeft: '10px', 
-                    color: curClass.letterGrade.toLowerCase() === "a" ? 'lime' : 
-                        curClass.letterGrade.toLowerCase() === "b" ? 'orange' : 
-                        curClass.letterGrade.toLowerCase() === "c" ? 'yellow' : 
-                        curClass.letterGrade.toLowerCase() === "d" ? 'cyan' : 'red'}}>
-                        {curClass.letterGrade} {curClass.rawGrade}%</h2> : null}
-            </div>
-            <div style={{
-                flex: 1,
+                flex: 3,
                 justifyContent: "flex-end",
                 display: "flex",
-                alignItems: 'center'
+                alignItems: 'center',
+                backgroundColor: 'transparent'
             }}>
                 {showAssignments && !addingAssignment && !showAssignmentDetail ? <strong 
                 onClick={loadAddAssignmentPage}
+                onMouseEnter={() => setAddAssignmentHover(true)}
+                onMouseLeave={() => setAddAssignmentHover(false)}
                 style={{
                     color: '#d1c2a3',
-                    fontSize: '18px'
+                    fontSize: '18px',
+                    cursor: 'pointer'
                 }}>Add Assignment</strong> : null}
                 {showAssignments && !addingAssignment && !showAssignmentDetail ? <button 
                     onClick={loadAddAssignmentPage}
+                    onMouseEnter={() => setAddAssignmentHover(true)}
+                    onMouseLeave={() => setAddAssignmentHover(false)}
                     style={{
-                    borderRadius: '50px',
-                    height: '40px',
-                    width: '40px',
-                    marginLeft: '10px',
-                    marginRight: '10px',
-                    fontSize: '24px',
-                    backgroundColor: 'transparent',
-                    color: '#d1c2a3',
-                    borderColor: '#d1c2a3',
-                    borderWidth: '4px',
-                    borderStyle: 'solid',
-                    cursor: 'pointer'
+                        borderRadius: '50px',
+                        height: '40px',
+                        width: '40px',
+                        marginLeft: '10px',
+                        marginRight: '10px',
+                        fontSize: '24px',
+                        backgroundColor: addAssignmentHover ? '#6a7586' : 'transparent',
+                        color: '#d1c2a3',
+                        borderColor: '#d1c2a3',
+                        borderWidth: '4px',
+                        borderStyle: 'solid',
+                        cursor: 'pointer'
                 }}>+</button> : null}
             </div>
         </div>
-        {!showAssignments ? (
+        {isChangeLoading ? (
+            <div style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+                display: 'flex',
+                height: '70%'
+            }}>
+                <Spinner/>
+            </div>
+            
+        ) : !showAssignments ? (
             <div
             style={{
             display: 'flex',
@@ -528,10 +732,13 @@ function DataPage({list,
             width: '100vw'
             }}
             >
-                {list.map((item, index) => (
+                {classList.map((item, index) => (
                 <div
                     key={index}
+                    class="hover-div"
                     onClick={() => onClassClick({item})}
+                    onMouseEnter={() => handleMouseEnterClass(index)}
+                    onMouseLeave={() => handleMouseLeaveClass(index)}
                     style={{
                     border: '3px solid #d1c2a3',
                     borderRadius: '8px',
@@ -542,12 +749,14 @@ function DataPage({list,
                     width: '70%',
                     textAlign: 'center',
                     boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-                    backgroundColor: 'transparent',
+                    backgroundColor: classHover[index] ? '#6a7586' : 'transparent',
                     color: 'white',
                     fontSize: '16px',
                     display: 'flex', 
                     justifyContent: 'space-between', 
-                    alignItems: 'center' 
+                    alignItems: 'center',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.3s ease',
                     }}
                 >
                     <p style={{fontSize: '18px'}}><strong>{item.id}</strong> {item.title}</p>
@@ -571,7 +780,10 @@ function DataPage({list,
                     assignmentList.length > 0 ? (assignmentList.map((assignment, index) => (
                     <div
                     onClick={() => onAssignmentClick({assignment, index})}
+                    onMouseEnter={() => handleMouseEnterAssignment(index)}
+                    onMouseLeave={() => handleMouseLeaveAssignment(index)}
                     key={index}
+                    class="hover-div"
                     style={{
                     border: '3px solid #d1c2a3',
                     borderRadius: '8px',
@@ -581,15 +793,25 @@ function DataPage({list,
                     paddingRight: '20px',
                     width: '70%',
                     boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-                    backgroundColor: 'transparent',
+                    backgroundColor: assignmentHover[index] ? '#6a7586' : 'transparent',
                     color: 'white',
                     fontSize: '16px',
                     display: 'flex', 
                     justifyContent: 'space-between', 
-                    alignItems: 'center' 
-                    }}
-                    >
-                        <p>{assignment?.name || "Unnamed Assignment"}{" "}</p>
+                    alignItems: 'center',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.3s ease',
+                    }}>
+                        <div style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            gap: '10px'
+                        }}>
+                            <p style={{
+                                color: '#d1c2a3'
+                            }}>{dateToString(assignment?.date.due) || "No Date"}{" "}</p>
+                            <p>{assignment?.name || "Unnamed Assignment"}{" "}</p>
+                        </div>
                         <div style={{
                             justifyContent: 'end',
                             alignItems: 'center',
@@ -714,14 +936,18 @@ function DataPage({list,
                             <select
                                 value={assignmentTypeSelected}
                                 onChange={dropdownChange}
+                                onMouseEnter={() => setAssignmentTypeHover(true)}
+                                onMouseLeave={() => setAssignmentTypeHover(false)}
                                 style={{
                                     padding: "8px",
                                     borderRadius: "5px",
                                     border: "2px solid #d1c2a3",
-                                    backgroundColor: "transparent",
+                                    backgroundColor: assignmentTypeHover ? '#6a7586' : "transparent",
                                     color: "#d1c2a3",
                                     fontSize: "16px",
-                                    width: '100%'
+                                    width: '100%',
+                                    cursor: 'pointer',
+                                    transition: 'background-color 0.3s ease',
                                 }}>
                                 {curClass.assignmentTypes.map((option, index) => (
                                     <option key={index} value={option.type}>
@@ -742,16 +968,19 @@ function DataPage({list,
                                 >Point values not valid</p>
                             <button 
                             onClick={addAssignment}
+                            onMouseEnter={() => setAddButtonHover(true)}
+                            onMouseLeave={() => setAddButtonHover(false)}
                             style={{
                                 width: '150px',
                                 padding: '10px',
-                                backgroundColor: '#d1c2a3',
+                                backgroundColor: addButtonHover ? '#e0d4b4' : '#d1c2a3',
                                 color: '#5b6476',
                                 fontSize: '16px',
                                 border: 'none',
                                 borderRadius: '8px',
                                 cursor: 'pointer',
-                                marginTop: '5px'
+                                marginTop: '5px',
+                                transition: 'background-color 0.3s ease',
                             }}>Add</button>
                         </div>
                     </div> : 
@@ -863,14 +1092,18 @@ function DataPage({list,
                             <select
                                 value={editAssignmentTypeSelected}
                                 onChange={editDropdownChange}
+                                onMouseEnter={() => setEditAssignmentTypeHover(true)}
+                                onMouseLeave={() => setEditAssignmentTypeHover(false)}
                                 style={{
                                     padding: "8px",
                                     borderRadius: "5px",
                                     border: "2px solid #d1c2a3",
-                                    backgroundColor: "transparent",
+                                    backgroundColor: editAssignmentTypeHover ? '#6a7586' : "transparent",
                                     color: "#d1c2a3",
                                     fontSize: "16px",
-                                    width: '100%'
+                                    width: '100%',
+                                    cursor: 'pointer',
+                                    transition: 'background-color 0.3s ease',
                                 }}>
                                 
                                 {curClass.assignmentTypes.map((option, index) => (
@@ -899,29 +1132,35 @@ function DataPage({list,
                             }}>
                                 <button 
                                 onClick={deleteAssignment}
+                                onMouseEnter={() => setDeleteButtonHover(true)}
+                                onMouseLeave={() => setDeleteButtonHover(false)}
                                 style={{
                                     width: '150px',
                                     padding: '10px',
-                                    backgroundColor: 'red',
+                                    backgroundColor: deleteButtonHover ? '#ff7b65' : 'tomato',
                                     color: 'white',
                                     fontSize: '16px',
                                     border: 'none',
                                     borderRadius: '8px',
                                     cursor: 'pointer',
-                                    marginTop: '5px'
+                                    marginTop: '5px',
+                                    transition: 'background-color 0.3s ease',
                                 }}>Delete</button>
                                 <button 
                                 onClick={onEditAssignment}
+                                onMouseEnter={() => setSaveButtonHover(true)}
+                                onMouseLeave={() => setSaveButtonHover(false)}
                                 style={{
                                     width: '150px',
                                     padding: '10px',
-                                    backgroundColor: '#d1c2a3',
+                                    backgroundColor: saveButtonHover ? '#e0d4b4' : '#d1c2a3',
                                     color: '#5b6476',
                                     fontSize: '16px',
                                     border: 'none',
                                     borderRadius: '8px',
                                     cursor: 'pointer',
-                                    marginTop: '5px'
+                                    marginTop: '5px',
+                                    transition: 'background-color 0.3s ease',
                                 }}>Save</button>
                             </div>
                         </div>

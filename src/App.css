@@ -46,3 +46,14 @@ body, html {
 input::placeholder {
   color: #c7c7c7;  
 }
+/* 
+.hover-div {
+  width: 200px;
+  height: 100px;
+  background-color: lightblue;
+  transition: background-color 0.3s ease; /* Smooth transition effect 
+} */
+
+/* .hover-div:hover {
+  background-color: lightgreen; /* Color changes when hovered 
+} */
