@@ -20,6 +20,7 @@ async function getAcc(username, password){
 
 
 function App() {
+  const isIPhone = /iPhone/i.test(navigator.userAgent);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isError, setError] = useState(false);
@@ -52,8 +53,7 @@ function App() {
   const [addButtonHover, setAddButtonHover] = useState(false);
   const [saveButtonHover, setSaveButtonHover] = useState(false);
   const [deleteButtonHover, setDeleteButtonHover] = useState(false);
-
-
+  const [refreshButtonHover, setRefreshButtonHover] = useState(false);
 
   const updateClass = (
     id, 
@@ -105,8 +105,8 @@ function App() {
   };
 
   const onLogin = useCallback(async (user, pass, reportingPeriodIndex) => {
+    let finalList = [];
     setLoading(true);
-    setShowAssignments(false);
     setError(false);
 
     let accUser = user === null ? username : user;
@@ -145,7 +145,7 @@ function App() {
         let gradingScale = gradebook.gradingScale;
         if (letterGrade === "" || letterGrade === undefined || letterGrade === null || !isNaN(letterGrade)){
           //calculate letter grade
-          if (gradingScale.A !== null && rawGrade >= gradingScale.A[0] && rawGrade <= gradingScale.A[1]){
+          if (gradingScale.A !== null && rawGrade >= gradingScale.A[0]){
             letterGrade = "A";
           }
           else if (gradingScale.B !== null && rawGrade >= gradingScale.B[0] && rawGrade <= gradingScale.B[1]){
@@ -175,11 +175,13 @@ function App() {
       setOutputList(classList);
       setClassHover(classList.map(() => false));
       setDataPage(true);
+      finalList = classList;
     }
     else{
       setError(true);
     }
     setLoading(false);
+    return finalList;
   }, [username, password]);
 
   useEffect(() => {
@@ -190,6 +192,7 @@ function App() {
 
         await onLogin(document.getElementById('usernameInput').value, 
         document.getElementById('passwordInput').value);
+        setShowAssignments(false);
       }
     };
 
@@ -273,6 +276,8 @@ function App() {
         setSaveButtonHover={setSaveButtonHover}
         deleteButtonHover={deleteButtonHover}
         setDeleteButtonHover={setDeleteButtonHover}
+        refreshButtonHover={refreshButtonHover}
+        setRefreshButtonHover={setRefreshButtonHover}
         />
       </div>
     ) : (
@@ -333,7 +338,10 @@ function App() {
           marginBottom: '0px'}}
           >Incorrect ID or Password</p>
         {isLoading ? (<Spinner/>) : (<button
-          onClick={() => onLogin(username, password)}
+          onClick={() => {
+            onLogin(username, password);
+            setShowAssignments(false);
+          }}
           onMouseEnter={() => setLoginHover(true)}
           onMouseLeave={() => setLoginHover(false)}
           style={{

@@ -55,6 +55,8 @@ function DataPage({classList,
     setSaveButtonHover,
     deleteButtonHover,
     setDeleteButtonHover,
+    refreshButtonHover,
+    setRefreshButtonHover,
     }){
 
     const dateToString = (date) => {
@@ -71,7 +73,9 @@ function DataPage({classList,
     const onClassClick = ({item}) => {
         setCurClass(item);
         setAssignmentList(item.assignments);
-        setAssignmentTypeSelected(item.assignmentTypes[0].type);
+        if (item.assignmentTypes.length > 0){
+            setAssignmentTypeSelected(item.assignmentTypes[0].type);
+        }
         setAssignmentHover(assignmentList.map(() => false));
         setShowAssignments(true);
     };
@@ -110,7 +114,7 @@ function DataPage({classList,
         setPointAmountError(false);
         let pointsScored = Number(document.getElementById('pointsScoredInput').value);
         let pointsPossible = Number(document.getElementById('pointsPossibleInput').value);
-        if (pointsScored >= 0 && pointsPossible >= 0 && pointsScored <= pointsPossible){
+        if (pointsScored >= 0 && pointsPossible > 0){
             let newAssignment = {
                 name: document.getElementById('nameInput').value, 
                 points: pointsScored + " / " + pointsPossible,
@@ -160,7 +164,7 @@ function DataPage({classList,
             console.log("new grade: " + rawGrade);
     
             let letterGrade = "";
-            if (gradingScale.A !== null && rawGrade >= gradingScale.A[0] && rawGrade <= gradingScale.A[1]){
+            if (gradingScale.A !== null && rawGrade >= gradingScale.A[0]){
                 letterGrade = "A";
             }
             else if (gradingScale.B !== null && rawGrade >= gradingScale.B[0] && rawGrade <= gradingScale.B[1]){
@@ -257,7 +261,7 @@ function DataPage({classList,
         let curAssignmentPoints = curAssignment.points;
         let curAssignmentType = curAssignment.type;
 
-        if (!(pointsScored === 0 && pointsPossible === 0) && pointsScored >= 0 && pointsPossible >= 0 && pointsScored <= pointsPossible){
+        if (pointsScored >= 0 && pointsPossible > 0){
             let newAssignmentList = [];
             newAssignmentList = newAssignmentList.concat(assignmentList);
             if (curAssignmentName !== document.getElementById('editNameInput').value){
@@ -361,7 +365,7 @@ function DataPage({classList,
                 console.log("new grade: " + rawGrade);
 
                 
-                if (gradingScale.A !== null && rawGrade >= gradingScale.A[0] && rawGrade <= gradingScale.A[1]){
+                if (gradingScale.A !== null && rawGrade >= gradingScale.A[0]){
                     letterGrade = "A";
                 }
                 else if (gradingScale.B !== null && rawGrade >= gradingScale.B[0] && rawGrade <= gradingScale.B[1]){
@@ -496,7 +500,7 @@ function DataPage({classList,
             console.log("new grade: " + rawGrade);
 
             let letterGrade = "";
-            if (gradingScale.A !== null && rawGrade >= gradingScale.A[0] && rawGrade <= gradingScale.A[1]){
+            if (gradingScale.A !== null && rawGrade >= gradingScale.A[0]){
                 letterGrade = "A";
             }
             else if (gradingScale.B !== null && rawGrade >= gradingScale.B[0] && rawGrade <= gradingScale.B[1]){
@@ -562,12 +566,49 @@ function DataPage({classList,
         const index = event.target.selectedIndex;
         setCurReportingPeriod(value);
         setCurReportingPeriodIndex(index);
-        await onLogin(username, password, index);
+        let classList = await onLogin(username, password, index);
         setLoadDataPage(true);
         setAddingAssignment(false);
         setShowAssignmentDetail(false);
+        if (showAssignments){
+            let classFound = false;
+            for (let i = 0; i < classList.length; i++){
+                if (classList[i].id === curClass.id){
+                    setCurClass(classList[i]);
+                    setAssignmentList(classList[i].assignments || []);
+                    classFound = true;
+                    break;
+                }
+            }
+            if (!classFound){
+                setShowAssignments(false);
+            }
+        }
         setChangeLoading(false);
     };
+
+    const refreshClicked = async () => {
+        setChangeLoading(true);
+        let classList = await onLogin(username, password, curReportingPeriodIndex);
+        setLoadDataPage(true);
+        setAddingAssignment(false);
+        setShowAssignmentDetail(false);
+        if (showAssignments){
+            let classFound = false;
+            for (let i = 0; i < classList.length; i++){
+                if (classList[i].id === curClass.id){
+                    setCurClass(classList[i]);
+                    setAssignmentList(classList[i].assignments || []);
+                    classFound = true;
+                    break;
+                }
+            }
+            if (!classFound){
+                setShowAssignments(false);
+            }
+        }
+        setChangeLoading(false);
+    }
 
     console.log("rendered");
     console.log("assignmentList: " + assignmentList);
@@ -616,13 +657,13 @@ function DataPage({classList,
                             padding: '5px 10px',
                             margin: '10px',
                             transition: 'background-color 0.3s ease',
-                    }}
+                        }}
                         onClick={onBackClick}
                         >{showAssignments ? "Back" : "Sign out"}</button>
                 </div>
                 <div style={{
-                    flex: 2,
-                    justifyContent: "flex-end",
+                    flex: 3,
+                    justifyContent: 'space-between',
                     display: 'flex',
                     alignItems: 'center',
                     // backgroundColor: 'orange'
@@ -649,14 +690,33 @@ function DataPage({classList,
                                 {option.name}
                             </option>
                         ))}
-                    </select> : null}
+                    </select> : <div></div>}
+                    {!showAssignmentDetail && !addingAssignment ? <button 
+                        onClick={refreshClicked}
+                        onMouseEnter={() => setRefreshButtonHover(true)}
+                        onMouseLeave={() => setRefreshButtonHover(false)}
+                        style={{
+                            backgroundColor: refreshButtonHover ? '#6a7586' : 'transparent',
+                            border: '#d1c2a3',
+                            borderWidth: '2px',
+                            borderStyle: 'solid',
+                            color: '#d1c2a3',
+                            textAlign: 'right',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            cursor: 'pointer',
+                            fontSize: '30px',
+                            borderRadius: '5px',
+                            transition: 'background-color 0.3s ease',
+                        }}><strong>⟳</strong></button> : null}
                 </div>
                 <div style={{
                     flex: 6,
                     justifyContent: "center",
                     display: "flex",
                     alignItems: 'center',
-                    backgroundColor: 'transparent',
+                    // backgroundColor: 'blue',
                     textAlign: 'center'
                 }}>
                     <h2 style={{
@@ -675,7 +735,7 @@ function DataPage({classList,
             </div>
             
             <div style={{
-                flex: 3,
+                flex: 4,
                 justifyContent: "flex-end",
                 display: "flex",
                 alignItems: 'center',
@@ -704,7 +764,7 @@ function DataPage({classList,
                         backgroundColor: addAssignmentHover ? '#6a7586' : 'transparent',
                         color: '#d1c2a3',
                         borderColor: '#d1c2a3',
-                        borderWidth: '4px',
+                        borderWidth: '3px',
                         borderStyle: 'solid',
                         cursor: 'pointer'
                 }}>+</button> : null}
