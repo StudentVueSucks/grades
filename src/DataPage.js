@@ -1,7 +1,9 @@
 import React from "react";
 import Spinner from "./Spinner";
 
-function DataPage({classList, 
+function DataPage({
+    isMobile,
+    classList, 
     showAssignments, 
     setShowAssignments, 
     assignmentList, 
@@ -615,26 +617,27 @@ function DataPage({classList,
 
     return (<div style={{ 
         flexDirection: 'column',  
-        alignItems: 'center',    
+        alignItems: isMobile ? 'stretch' : 'center',    
         justifyContent: 'center',
         backgroundColor: '#5b6476',
         overflowY: 'auto', 
-        paddingTop: '5px',
+        paddingTop: isMobile ? '0px' : '5px',
         paddingBottom: '20px',
         boxSizing: 'border-box',
-        width: '100vw',
+        width: isMobile ? '100%' : '100vw',
         height: '100vh'}}>
         <div style={{
-            display: 'flex',
-            alignItems: 'center',
+            display: 'flex', 
+            flexDirection: isMobile ? 'column' : 'row',
+            alignItems: isMobile ? 'stretch' : 'center',
             width: '100%',
-            paddingBottom: '10px'
+            paddingBottom: isMobile ? '0px' : '10px'
         }}
         >
             <div style={{
                 flex: 9,
-                display: 'flex',
-                alignItems: 'center',
+                display: 'flex', flexDirection: isMobile ? 'column' : 'row',
+                alignItems: isMobile ? 'stretch' : 'center',
                 backgroundColor: 'transparent'
             }}>
                 <div style={{
@@ -652,7 +655,7 @@ function DataPage({classList,
                             color: '#5b6476',
                             textAlign: 'left',
                             cursor: 'pointer',
-                            fontSize: '16px',
+                            fontSize: isMobile ? '18px' : '16px',
                             borderRadius: '5px',
                             padding: '5px 10px',
                             margin: '10px',
@@ -663,83 +666,89 @@ function DataPage({classList,
                 </div>
                 <div style={{
                     flex: 3,
-                    justifyContent: 'space-between',
-                    display: 'flex',
-                    alignItems: 'center',
+                    justifyContent: isMobile ? 'stretch' : 'space-between',
+                    display: 'flex', 
+                    flexDirection: 'row',
+                    alignItems: isMobile ? 'flex-start' : 'center',
+                    gap: isMobile ? '5px' : '0px',
+                    marginLeft: isMobile ? '5px' : '0px',
+                    marginRight: isMobile ? '5px' : '0px',
                     // backgroundColor: 'orange'
                 }}>
                     {!showAssignmentDetail && !addingAssignment ? <select
-                        value={curReportingPeriod}
-                        onChange={reportingPeriodDropdownChange}
-                        onMouseEnter={() => setPeriodHover(true)}
-                        onMouseLeave={() => setPeriodHover(false)}
-                        style={{
-                            padding: "8px",
-                            borderRadius: "5px",
-                            border: "2px solid #d1c2a3",
-                            backgroundColor: periodHover ? '#6a7586' : 'transparent',
-                            color: "#d1c2a3",
-                            fontSize: "16px",
-                            maxWidth: '100%',
-                            width: '60%',
-                            cursor: 'pointer',
-                            transition: 'background-color 0.3s ease',
-                        }}>
-                        {reportingPeriods.map((option, index) => (
-                            <option key={index} value={option.name}>
-                                {option.name}
-                            </option>
-                        ))}
-                    </select> : <div></div>}
-                    {!showAssignmentDetail && !addingAssignment ? <button 
-                        onClick={refreshClicked}
-                        onMouseEnter={() => setRefreshButtonHover(true)}
-                        onMouseLeave={() => setRefreshButtonHover(false)}
-                        style={{
-                            backgroundColor: refreshButtonHover ? '#6a7586' : 'transparent',
-                            border: '#d1c2a3',
-                            borderWidth: '2px',
-                            borderStyle: 'solid',
-                            color: '#d1c2a3',
-                            textAlign: 'right',
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            cursor: 'pointer',
-                            fontSize: '30px',
-                            borderRadius: '5px',
-                            transition: 'background-color 0.3s ease',
-                        }}><strong>⟳</strong></button> : null}
+                            value={curReportingPeriod}
+                            onChange={reportingPeriodDropdownChange}
+                            onMouseEnter={() => setPeriodHover(true)}
+                            onMouseLeave={() => setPeriodHover(false)}
+                            style={{
+                                padding: "8px",
+                                borderRadius: "5px",
+                                border: "2px solid #d1c2a3",
+                                backgroundColor: periodHover ? '#6a7586' : 'transparent',
+                                color: "#d1c2a3",
+                                fontSize: "16px",
+                                maxWidth: '100%',
+                                width: isMobile ? '100%' : '60%',
+                                cursor: 'pointer',
+                                transition: 'background-color 0.3s ease',
+                            }}>
+                            {reportingPeriods.map((option, index) => (
+                                <option key={index} value={option.name}>
+                                    {option.name}
+                                </option>
+                            ))}
+                        </select> : <div></div>}
+                        {!showAssignmentDetail && !addingAssignment ? <button 
+                            onClick={refreshClicked}
+                            onMouseEnter={() => setRefreshButtonHover(true)}
+                            onMouseLeave={() => setRefreshButtonHover(false)}
+                            style={{
+                                backgroundColor: refreshButtonHover ? '#6a7586' : 'transparent',
+                                border: '#d1c2a3',
+                                borderWidth: '2px',
+                                borderStyle: 'solid',
+                                color: '#d1c2a3',
+                                textAlign: 'right',
+                                display: 'flex', 
+                                flexDirection: isMobile ? 'column' : 'row',
+                                justifyContent: isMobile ? 'flex-start' : 'center',
+                                alignItems: 'center',
+                                cursor: 'pointer',
+                                fontSize: '30px',
+                                borderRadius: '5px',
+                                transition: 'background-color 0.3s ease',
+                            }}><strong>⟳</strong></button> : null}
                 </div>
                 <div style={{
                     flex: 6,
                     justifyContent: "center",
                     display: "flex",
                     alignItems: 'center',
-                    // backgroundColor: 'blue',
+                    // backgroundColor: 'purple',
                     textAlign: 'center'
                 }}>
                     <h2 style={{
                             margin: 0,
                             textAlign: 'center',
-                            color: 'white'
+                            color: 'white',
                         }}>{!showAssignments ? "Classes" : curClass.title}</h2>
-                        {showAssignments ? <h2 style={{
-                            marginLeft: '10px', 
-                            color: curClass.letterGrade.toLowerCase() === "a" ? 'lime' : 
-                                curClass.letterGrade.toLowerCase() === "b" ? 'orange' : 
-                                curClass.letterGrade.toLowerCase() === "c" ? 'yellow' : 
-                                curClass.letterGrade.toLowerCase() === "d" ? 'cyan' : 'red'}}>
-                                {curClass.letterGrade} {curClass.rawGrade}%</h2> : null}
+                    {showAssignments ? <h2 style={{
+                        marginLeft: isMobile ? '0px' : '10px', 
+                        marginRight: isMobile ? '5px' : '0px',
+                        color: curClass.letterGrade.toLowerCase() === "a" ? 'lime' : 
+                            curClass.letterGrade.toLowerCase() === "b" ? 'orange' : 
+                            curClass.letterGrade.toLowerCase() === "c" ? 'yellow' : 
+                            curClass.letterGrade.toLowerCase() === "d" ? 'cyan' : 'red'}}>
+                            {curClass.letterGrade} {curClass.rawGrade}%</h2> : null}
                 </div>
             </div>
-            
             <div style={{
                 flex: 4,
                 justifyContent: "flex-end",
                 display: "flex",
                 alignItems: 'center',
-                backgroundColor: 'transparent'
+                // backgroundColor: 'red',
+                marginBottom: '10px'
             }}>
                 {showAssignments && !addingAssignment && !showAssignmentDetail ? <strong 
                 onClick={loadAddAssignmentPage}
@@ -755,9 +764,9 @@ function DataPage({classList,
                     onMouseEnter={() => setAddAssignmentHover(true)}
                     onMouseLeave={() => setAddAssignmentHover(false)}
                     style={{
-                        borderRadius: '50px',
-                        height: '40px',
-                        width: '40px',
+                        borderRadius: isMobile ? '15px' :'50px',
+                        height: isMobile ? '' : '40px',
+                        width: isMobile ? '' : '40px',
                         marginLeft: '10px',
                         marginRight: '10px',
                         fontSize: '24px',
@@ -772,9 +781,9 @@ function DataPage({classList,
         </div>
         {isChangeLoading ? (
             <div style={{
-                alignItems: 'center',
-                justifyContent: 'center',
-                display: 'flex',
+                alignItems: isMobile ? 'stretch' : 'center',
+                justifyContent: isMobile ? 'flex-start' : 'center',
+                display: 'flex', flexDirection: isMobile ? 'column' : 'row',
                 height: '70%'
             }}>
                 <Spinner/>
@@ -788,108 +797,228 @@ function DataPage({classList,
             flexWrap: 'nowrap',
             justifyContent: 'center',
             alignItems: 'center',
-            gap: '15px',
-            width: '100vw'
+            gap: isMobile ? '0px' : '10px',
+            width: '100vw',
+            marginBottom: isMobile ? '80px' : '0px',
+            // backgroundColor: 'red'
             }}
             >
-                {classList.map((item, index) => (
-                <div
-                    key={index}
-                    class="hover-div"
-                    onClick={() => onClassClick({item})}
-                    onMouseEnter={() => handleMouseEnterClass(index)}
-                    onMouseLeave={() => handleMouseLeaveClass(index)}
+                {isMobile ? 
+                    <div
                     style={{
-                    border: '3px solid #d1c2a3',
-                    borderRadius: '8px',
-                    paddingTop: '10px',
-                    paddingBottom: '10px',
-                    paddingLeft: '20px',
-                    paddingRight: '20px',
-                    width: '70%',
-                    textAlign: 'center',
-                    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-                    backgroundColor: classHover[index] ? '#6a7586' : 'transparent',
-                    color: 'white',
-                    fontSize: '16px',
-                    display: 'flex', 
-                    justifyContent: 'space-between', 
-                    alignItems: 'center',
-                    cursor: 'pointer',
-                    transition: 'background-color 0.3s ease',
-                    }}
-                >
-                    <p style={{fontSize: '18px'}}><strong>{item.id}</strong> {item.title}</p>
-                    <strong style={{color: item.letterGrade.toLowerCase() === "a" ? 'lime' : 
-                        item.letterGrade.toLowerCase() === "b" ? 'orange' : 
-                        item.letterGrade.toLowerCase() === "c" ? 'yellow' : 
-                        item.letterGrade.toLowerCase() === "d" ? 'cyan' : 'red'}}>
-                            {item.letterGrade} {item.rawGrade}%
-                    </strong>
-                </div>
-                ))}
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        gap: '10px',
+                        width: '95vw'
+                    }}>
+                        {classList.map((item, index) => (
+                        <div
+                            key={index}
+                            class="hover-div"
+                            onClick={() => onClassClick({item})}
+                            onMouseEnter={() => handleMouseEnterClass(index)}
+                            onMouseLeave={() => handleMouseLeaveClass(index)}
+                            style={{
+                            border: '3px solid #d1c2a3',
+                            borderRadius: isMobile ? '12px' : '8px',
+                            paddingTop: '10px',
+                            paddingBottom: '10px',
+                            paddingLeft: '20px',
+                            paddingRight: '20px',
+                            width: isMobile ? '90%' : '70%',
+                            textAlign: 'center',
+                            boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+                            backgroundColor: classHover[index] ? '#6a7586' : 'transparent',
+                            color: 'white',
+                            fontSize: isMobile ? '18px' : '16px',
+                            display: 'flex', 
+                            flexDirection: isMobile ? 'column' : 'row', 
+                            justifyContent: 'space-between', 
+                            alignItems: 'center',
+                            cursor: 'pointer',
+                            transition: 'background-color 0.3s ease',
+                            }}
+                        >
+                            <p style={{fontSize: '18px'}}><strong>{item.id}</strong> {item.title}</p>
+                            <strong style={{color: item.letterGrade.toLowerCase() === "a" ? 'lime' : 
+                                item.letterGrade.toLowerCase() === "b" ? 'orange' : 
+                                item.letterGrade.toLowerCase() === "c" ? 'yellow' : 
+                                item.letterGrade.toLowerCase() === "d" ? 'cyan' : 'red'}}>
+                                    {item.letterGrade} {item.rawGrade}%
+                            </strong>
+                        </div>
+                        ))}
+                    </div>
+                :
+                classList.map((item, index) => (
+                    <div
+                        key={index}
+                        class="hover-div"
+                        onClick={() => onClassClick({item})}
+                        onMouseEnter={() => handleMouseEnterClass(index)}
+                        onMouseLeave={() => handleMouseLeaveClass(index)}
+                        style={{
+                        border: '3px solid #d1c2a3',
+                        borderRadius: '8px',
+                        paddingTop: '10px',
+                        paddingBottom: '10px',
+                        paddingLeft: '20px',
+                        paddingRight: '20px',
+                        width: '70%',
+                        textAlign: 'center',
+                        boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+                        backgroundColor: classHover[index] ? '#6a7586' : 'transparent',
+                        color: 'white',
+                        fontSize: '16px',
+                        display: 'flex', 
+                        flexDirection: 'row', 
+                        justifyContent: 'space-between', 
+                        alignItems: 'center',
+                        cursor: 'pointer',
+                        transition: 'background-color 0.3s ease',
+                        }}
+                    >
+                        <p style={{fontSize: '18px'}}><strong>{item.id}</strong> {item.title}</p>
+                        <strong style={{color: item.letterGrade.toLowerCase() === "a" ? 'lime' : 
+                            item.letterGrade.toLowerCase() === "b" ? 'orange' : 
+                            item.letterGrade.toLowerCase() === "c" ? 'yellow' : 
+                            item.letterGrade.toLowerCase() === "d" ? 'cyan' : 'red'}}>
+                                {item.letterGrade} {item.rawGrade}%
+                        </strong>
+                    </div>
+                    ))
+                }
             </div>
         ) : (
-            <div style={{display: 'flex',
+            <div style={{display: 'flex', 
                 flexDirection: 'column',
                 justifyContent: 'center',
                 alignItems: 'center',
-                gap: '10px',}}>
+                marginBottom: isMobile ? '80px' : '0px',
+                gap: isMobile ? '0px' : '10px',
+                width: '100vw',}}>
                 {!addingAssignment && !showAssignmentDetail ? 
                     Array.isArray(assignmentList) && 
-                    assignmentList.length > 0 ? (assignmentList.map((assignment, index) => (
-                    <div
-                    onClick={() => onAssignmentClick({assignment, index})}
-                    onMouseEnter={() => handleMouseEnterAssignment(index)}
-                    onMouseLeave={() => handleMouseLeaveAssignment(index)}
-                    key={index}
-                    class="hover-div"
-                    style={{
-                    border: '3px solid #d1c2a3',
-                    borderRadius: '8px',
-                    paddingTop: '10px',
-                    paddingBottom: '10px',
-                    paddingLeft: '20px',
-                    paddingRight: '20px',
-                    width: '70%',
-                    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-                    backgroundColor: assignmentHover[index] ? '#6a7586' : 'transparent',
-                    color: 'white',
-                    fontSize: '16px',
-                    display: 'flex', 
-                    justifyContent: 'space-between', 
-                    alignItems: 'center',
-                    cursor: 'pointer',
-                    transition: 'background-color 0.3s ease',
-                    }}>
-                        <div style={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            gap: '10px'
-                        }}>
-                            <p style={{
-                                color: '#d1c2a3'
-                            }}>{dateToString(assignment?.date.due) || "No Date"}{" "}</p>
-                            <p>{assignment?.name || "Unnamed Assignment"}{" "}</p>
-                        </div>
-                        <div style={{
-                            justifyContent: 'end',
-                            alignItems: 'center',
-                            textAlign:'right',
-                            display: 'flex',
-                            flexDirection: 'row',
+                    assignmentList.length > 0 ? (
+                        isMobile ? 
+                            <div
+                            style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                gap: '10px',
+                                width: '95vw'
+                            }}>
+                                {assignmentList.map((assignment, index) => (
+                                    <div
+                                    onClick={() => onAssignmentClick({assignment, index})}
+                                    onMouseEnter={() => handleMouseEnterAssignment(index)}
+                                    onMouseLeave={() => handleMouseLeaveAssignment(index)}
+                                    key={index}
+                                    class="hover-div"
+                                    style={{
+                                    border: '3px solid #d1c2a3',
+                                    borderRadius: isMobile ? '12px' : '8px',
+                                    paddingTop: '10px',
+                                    paddingBottom: '10px',
+                                    paddingLeft: '20px',
+                                    paddingRight: '20px',
+                                    width: isMobile ? '90%' : '70%',
+                                    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+                                    backgroundColor: assignmentHover[index] ? '#6a7586' : 'transparent',
+                                    color: 'white',
+                                    fontSize: isMobile ? '18px' : '16px',
+                                    display: 'flex', flexDirection: isMobile ? 'column' : 'row', 
+                                    justifyContent: 'space-between', 
+                                    alignItems: isMobile ? 'stretch' : 'center',
+                                    cursor: 'pointer',
+                                    transition: 'background-color 0.3s ease',
+                                    }}>
+                                        <div style={{
+                                            display: 'flex',
+                                            flexDirection: 'row',
+                                            gap: '10px'
+                                        }}>
+                                            <p style={{
+                                                color: '#d1c2a3'
+                                            }}>{dateToString(assignment?.date.due) || "No Date"}{" "}</p>
+                                            <p>{assignment?.name || "Unnamed Assignment"}{" "}</p>
+                                        </div>
+                                        <div style={{
+                                            justifyContent: 'end',
+                                            alignItems: isMobile ? 'stretch' : 'center',
+                                            textAlign:'right',
+                                            display: 'flex',
+                                            flexDirection: 'row',
 
-                        }}>
-                            <strong style={{color: '#d1c2a3'}}>{assignment.type}</strong>
-                            <strong style={{
-                                textAlign: 'end', 
-                                justifyContent: 'end', 
-                                marginLeft: '15px'}}>
-                                {assignment?.points || ""}
-                            </strong>
-                        </div>
-                    </div>
-                ))) : null : 
+                                        }}>
+                                            <strong style={{color: '#d1c2a3'}}>{assignment.type}</strong>
+                                            <strong style={{
+                                                textAlign: 'end', 
+                                                justifyContent: 'end', 
+                                                marginLeft: '15px'}}>
+                                                {assignment?.points || ""}
+                                            </strong>
+                                        </div>
+                                    </div>))}
+                            </div>
+                        : 
+                            assignmentList.map((assignment, index) => (
+                                <div
+                                onClick={() => onAssignmentClick({assignment, index})}
+                                onMouseEnter={() => handleMouseEnterAssignment(index)}
+                                onMouseLeave={() => handleMouseLeaveAssignment(index)}
+                                key={index}
+                                class="hover-div"
+                                style={{
+                                border: '3px solid #d1c2a3',
+                                borderRadius: isMobile ? '12px' : '8px',
+                                paddingTop: '10px',
+                                paddingBottom: '10px',
+                                paddingLeft: '20px',
+                                paddingRight: '20px',
+                                width: isMobile ? '90%' : '70%',
+                                boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+                                backgroundColor: assignmentHover[index] ? '#6a7586' : 'transparent',
+                                color: 'white',
+                                fontSize: isMobile ? '18px' : '16px',
+                                display: 'flex', flexDirection: isMobile ? 'column' : 'row', 
+                                justifyContent: 'space-between', 
+                                alignItems: isMobile ? 'stretch' : 'center',
+                                cursor: 'pointer',
+                                transition: 'background-color 0.3s ease',
+                                }}>
+                                    <div style={{
+                                        display: 'flex', 
+                                        flexDirection: 'row',
+                                        gap: '10px'
+                                    }}>
+                                        <p style={{
+                                            color: '#d1c2a3'
+                                        }}>{dateToString(assignment?.date.due) || "No Date"}{" "}</p>
+                                        <p>{assignment?.name || "Unnamed Assignment"}{" "}</p>
+                                    </div>
+                                    <div style={{
+                                        justifyContent: 'end',
+                                        alignItems: isMobile ? 'stretch' : 'center',
+                                        textAlign:'right',
+                                        display: 'flex', 
+                                        flexDirection: 'row',
+
+                                    }}>
+                                        <strong style={{color: '#d1c2a3'}}>{assignment.type}</strong>
+                                        <strong style={{
+                                            textAlign: 'end', 
+                                            justifyContent: 'end', 
+                                            marginLeft: '15px'}}>
+                                            {assignment?.points || ""}
+                                        </strong>
+                                    </div>
+                                </div>))
+                    ) : null : 
                     ( !showAssignmentDetail ?
                     <div style={{
                         flex: 1,                  
@@ -898,16 +1027,18 @@ function DataPage({classList,
                         alignItems: 'center',     
                         justifyContent: 'start',
                         height: '100%',
-                        width: '50%',
+                        width: isMobile ? '100%' : '50%',
+                        // backgroundColor: 'red'
                     }}>
                         <h2 style={{
                             textAlign: 'center', 
+                            marginTop: '0px',
                             marginBottom: '20px', 
-                            color: '#d1c2a3' }}
+                            color: '#d1c2a3'}}
                             >Add Assignment</h2>
                         <div style={{
                             marginBottom: '15px', 
-                            width: '50%' }}>
+                            width: isMobile ? '90%' : '50%' }}>
                             <strong style={{
                                 display: 'block', 
                                 marginBottom: '5px', 
@@ -921,10 +1052,10 @@ function DataPage({classList,
                                 placeholder="Enter name"
                                 style={{
                                 width: '100%',
-                                padding: '10px',
+                                padding: isMobile ? '15px' : '10px',
                                 border: '1px solid #d1c2a3',
                                 borderRadius: '4px',
-                                fontSize: '16px',
+                                fontSize: isMobile ? '18px' : '16px',
                                 backgroundColor: 'transparent',
                                 color: 'white',
                                 boxSizing: 'border-box',
@@ -932,7 +1063,7 @@ function DataPage({classList,
                                 defaultValue="New Assignment"
                             />
                         </div>
-                        <div style={{marginBottom: '15px', width: '50%'}}>
+                        <div style={{marginBottom: '15px', width: isMobile ? '90%' : '50%'}}>
                             <strong style={{
                                 display: 'block', 
                                 marginBottom: '5px', 
@@ -946,10 +1077,10 @@ function DataPage({classList,
                                 placeholder="Enter points scored"
                                 style={{
                                 width: '100%',
-                                padding: '10px',
+                                padding: isMobile ? '15px' : '10px',
                                 border: '1px solid #d1c2a3',
                                 borderRadius: '4px',
-                                fontSize: '16px',
+                                fontSize: isMobile ? '18px' : '16px',
                                 backgroundColor: 'transparent',
                                 color: 'white',
                                 boxSizing: 'border-box',
@@ -958,7 +1089,7 @@ function DataPage({classList,
                         </div>
                         <div style={{
                             marginBottom: '15px', 
-                            width: '50%'}}>
+                            width: isMobile ? '90%' : '50%'}}>
                             <strong style={{
                                 display: 'block', 
                                 marginBottom: '5px', 
@@ -972,10 +1103,10 @@ function DataPage({classList,
                                 placeholder="Enter points possible"
                                 style={{
                                 width: '100%',
-                                padding: '10px',
+                                padding: isMobile ? '15px' : '10px',
                                 border: '1px solid #d1c2a3',
                                 borderRadius: '4px',
-                                fontSize: '16px',
+                                fontSize: isMobile ? '18px' : '16px',
                                 backgroundColor: 'transparent',
                                 color: 'white',
                                 boxSizing: 'border-box',
@@ -984,7 +1115,7 @@ function DataPage({classList,
                         </div>
                         <div style={{
                             marginBottom: '15px',
-                            width: '50%'
+                            width: isMobile ? '90%' : '50%'
                         }}>
                             <strong style={{
                                 display: 'block', 
@@ -1017,7 +1148,8 @@ function DataPage({classList,
                             </select>
                         </div>
                         <div style={{
-                            width: '50%'
+                            width: isMobile ? '90%' : '50%',
+                            marginBottom: isMobile ? '5px' : '0px' 
                         }}>
                             <p hidden={!pointAmountError} style={{
                                 textAlign: 'center', 
@@ -1032,12 +1164,12 @@ function DataPage({classList,
                             onMouseLeave={() => setAddButtonHover(false)}
                             style={{
                                 width: '150px',
-                                padding: '10px',
+                                padding: isMobile ? '15px' : '10px',
                                 backgroundColor: addButtonHover ? '#e0d4b4' : '#d1c2a3',
                                 color: '#5b6476',
-                                fontSize: '16px',
+                                fontSize: isMobile ? '18px' : '16px',
                                 border: 'none',
-                                borderRadius: '8px',
+                                borderRadius: isMobile ? '12px' : '8px',
                                 cursor: 'pointer',
                                 marginTop: '5px',
                                 transition: 'background-color 0.3s ease',
@@ -1047,21 +1179,25 @@ function DataPage({classList,
                     // Show Assignment Details
                     <div style={{
                         flex: 1,                  
-                        display: 'flex',          
+                        display: 'flex',           
                         flexDirection: 'column',  
                         alignItems: 'center',     
-                        justifyContent: 'start',
+                        justifyContent: 'flex-start',
                         height: '100%',
-                        width: '50%',
+                        width: isMobile ? '100%' : '50%',
+                        // backgroundColor: 'blue'
                     }}>
                         <h2 style={{
                             textAlign: 'center', 
                             marginBottom: '20px', 
-                            color: '#d1c2a3' }}
+                            marginTop: '0px',
+                            color: '#d1c2a3',
+                            // backgroundColor: 'green'
+                        }}
                             >Edit Assignment</h2>
                         <div style={{
                             marginBottom: '15px', 
-                            width: '50%' }}>
+                            width: isMobile ? '90%' : '50%' }}>
                             <strong style={{
                                 display: 'block', 
                                 marginBottom: '5px', 
@@ -1075,10 +1211,10 @@ function DataPage({classList,
                                 placeholder="Enter name"
                                 style={{
                                 width: '100%',
-                                padding: '10px',
+                                padding: isMobile ? '15px' : '10px',
                                 border: '1px solid #d1c2a3',
                                 borderRadius: '4px',
-                                fontSize: '16px',
+                                fontSize: isMobile ? '18px' : '16px',
                                 backgroundColor: 'transparent',
                                 color: 'white',
                                 boxSizing: 'border-box',
@@ -1086,7 +1222,7 @@ function DataPage({classList,
                                 defaultValue={curAssignment.name}
                             />
                         </div>
-                        <div style={{marginBottom: '15px', width: '50%'}}>
+                        <div style={{marginBottom: '15px', width: isMobile ? '90%' : '50%'}}>
                             <strong style={{
                                 display: 'block', 
                                 marginBottom: '5px', 
@@ -1100,10 +1236,10 @@ function DataPage({classList,
                                 placeholder="Enter points scored"
                                 style={{
                                 width: '100%',
-                                padding: '10px',
+                                padding: isMobile ? '15px' : '10px',
                                 border: '1px solid #d1c2a3',
                                 borderRadius: '4px',
-                                fontSize: '16px',
+                                fontSize: isMobile ? '18px' : '16px',
                                 backgroundColor: 'transparent',
                                 color: 'white',
                                 boxSizing: 'border-box',
@@ -1113,7 +1249,7 @@ function DataPage({classList,
                         </div>
                         <div style={{
                             marginBottom: '15px', 
-                            width: '50%'}}>
+                            width: isMobile ? '90%' : '50%'}}>
                             <strong style={{
                                 display: 'block', 
                                 marginBottom: '5px', 
@@ -1127,10 +1263,10 @@ function DataPage({classList,
                                 placeholder="Enter points possible"
                                 style={{
                                 width: '100%',
-                                padding: '10px',
+                                padding: isMobile ? '15px' : '10px',
                                 border: '1px solid #d1c2a3',
                                 borderRadius: '4px',
-                                fontSize: '16px',
+                                fontSize: isMobile ? '18px' : '16px',
                                 backgroundColor: 'transparent',
                                 color: 'white',
                                 boxSizing: 'border-box',
@@ -1140,7 +1276,7 @@ function DataPage({classList,
                         </div>
                         <div style={{
                             marginBottom: '15px',
-                            width: '50%'
+                            width: isMobile ? '90%' : '50%'
                         }}>
                             <strong style={{
                                 display: 'block', 
@@ -1174,7 +1310,7 @@ function DataPage({classList,
                             </select>
                         </div>
                         <div style={{
-                            width: '50%'
+                            width: isMobile ? '90%' : '50%'
                         }}>
                             <p hidden={!pointAmountError} style={{
                                 textAlign: 'center', 
@@ -1186,9 +1322,10 @@ function DataPage({classList,
                             <div
                             style={{
                                 flexDirection: 'row',
-                                display: 'flex',
+                                display: 'flex', 
                                 justifyContent: 'center',
-                                gap: '15px'
+                                gap: '15px',
+                                marginBottom: isMobile ? '5px' : '0px' 
                             }}>
                                 <button 
                                 onClick={deleteAssignment}
@@ -1196,12 +1333,12 @@ function DataPage({classList,
                                 onMouseLeave={() => setDeleteButtonHover(false)}
                                 style={{
                                     width: '150px',
-                                    padding: '10px',
+                                    padding: isMobile ? '15px' : '10px',
                                     backgroundColor: deleteButtonHover ? '#ff7b65' : 'tomato',
                                     color: 'white',
-                                    fontSize: '16px',
+                                    fontSize: isMobile ? '18px' : '16px',
                                     border: 'none',
-                                    borderRadius: '8px',
+                                    borderRadius: isMobile ? '12px' : '8px',
                                     cursor: 'pointer',
                                     marginTop: '5px',
                                     transition: 'background-color 0.3s ease',
@@ -1212,12 +1349,12 @@ function DataPage({classList,
                                 onMouseLeave={() => setSaveButtonHover(false)}
                                 style={{
                                     width: '150px',
-                                    padding: '10px',
+                                    padding: isMobile ? '15px' : '10px',
                                     backgroundColor: saveButtonHover ? '#e0d4b4' : '#d1c2a3',
                                     color: '#5b6476',
-                                    fontSize: '16px',
+                                    fontSize: isMobile ? '18px' : '16px',
                                     border: 'none',
-                                    borderRadius: '8px',
+                                    borderRadius: isMobile ? '12px' : '8px',
                                     cursor: 'pointer',
                                     marginTop: '5px',
                                     transition: 'background-color 0.3s ease',

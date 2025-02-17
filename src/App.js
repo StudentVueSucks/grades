@@ -4,6 +4,18 @@ import StudentVue from "studentvue";
 import Spinner from './Spinner';
 import DataPage from './DataPage';
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+      const handleResize = () => setIsMobile(window.innerWidth <= 768);
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return isMobile;
+}
+
 async function getAcc(username, password){
     try{    
         return await StudentVue.login("https://md-mcps-psv.edupoint.com", {
@@ -20,7 +32,7 @@ async function getAcc(username, password){
 
 
 function App() {
-  const isIPhone = /iPhone/i.test(navigator.userAgent);
+  const isMobile = useIsMobile();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isError, setError] = useState(false);
@@ -204,17 +216,18 @@ function App() {
   }, [onLogin]);
 
   const containerStyle = {
-    display: 'flex',          
-    width: '100vw',          
-    height: '100vh',          
+    display: 'flex', 
+    flexDirection:'column',          
+    width: isMobile ? '100%' : '100vw',          
+    height: isMobile ? 'auto' : '100vh',          
   };
   
   const mainDivStyle = {
     flex: 1,                  
     display: 'flex',          
     flexDirection: 'column',  
-    alignItems: 'center',     
-    justifyContent: 'center', 
+    alignItems: isMobile ? 'stretch' : 'center',     
+    justifyContent: isMobile ? 'flex-start' : 'center', 
     backgroundColor: '#5b6476', 
   };
 
@@ -278,89 +291,116 @@ function App() {
         setDeleteButtonHover={setDeleteButtonHover}
         refreshButtonHover={refreshButtonHover}
         setRefreshButtonHover={setRefreshButtonHover}
+        isMobile={isMobile}
         />
       </div>
     ) : (
-      <div style={mainDivStyle}>
-      <header className="App-header">
-        <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Sign In</h2>
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ 
-            display: 'block',
-            marginBottom: '5px', 
-            textAlign: 'left' }}
-            >ID:</label>
-          <input
-            id='usernameInput'
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="Enter ID"
-            style={{
-              width: '100%',
-              padding: '10px',
-              border: '1px solid #d1c2a3',
-              borderRadius: '4px',
-              fontSize: '16px',
-              backgroundColor: 'transparent',
-              color: 'white'
-            }}
-          />
-        </div>
-        <div style={{marginBottom: '10px'}}>
-          <label style={{
-            display: 'block', 
-            marginBottom: '5px', 
-            textAlign: 'left' }}
-            >Password:</label>
-          <input
-            id='passwordInput'
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Enter password"
-            style={{
-              width: '100%',
-              padding: '10px',
-              border: '1px solid #d1c2a3',
-              borderRadius: '4px',
-              fontSize: '16px',
-              backgroundColor: 'transparent',
-              color: 'white'
-            }}
-          />
-        </div>
-        <p hidden={!isError} style={{
-          textAlign: 'center', 
-          color: 'red', 
-          fontSize: '18px', 
-          marginTop: '0px', 
-          marginBottom: '0px'}}
-          >Incorrect ID or Password</p>
-        {isLoading ? (<Spinner/>) : (<button
-          onClick={() => {
-            onLogin(username, password);
-            setShowAssignments(false);
-          }}
-          onMouseEnter={() => setLoginHover(true)}
-          onMouseLeave={() => setLoginHover(false)}
-          style={{
-            width: '150px',
-            padding: '10px',
-            backgroundColor: loginHover ? '#e0d4b4' : '#d1c2a3',
-            color: '#5b6476',
-            fontSize: '16px',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            marginTop: '10px',
-            transition: 'background-color 0.3s ease',
-          }}
-        >
-          Login
-        </button>)}
-      </header>
-    </div>
+      
+      <div style={{
+          flex: 1,                  
+          display: 'flex',          
+          flexDirection: 'column',  
+          alignItems: isMobile ? 'stretch' : 'center',     
+          justifyContent: isMobile ? 'center' : 'center', 
+          backgroundColor: '#5b6476',
+          height: '100vh'}}>
+          <h1 style={{
+            color: '#d1c2a3',
+            fontSize: isMobile ? '32px' : '46px',
+            marginTop: isMobile ? '60px' : '200px'
+          }}>StudentVue Sucks</h1>
+          <header className="App-header" style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            flex: 1,
+            // backgroundColor: 'blue',
+          }}>
+            <div style={{
+              // backgroundColor: 'red',
+              height: '80%',
+            }}>
+              <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Sign In</h2>
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ 
+                  display: 'block',
+                  marginBottom: '5px', 
+                  textAlign: 'left',
+                  fontSize: '24px' }}
+                  >ID:</label>
+                <input
+                  id='usernameInput'
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Enter ID"
+                  style={{
+                    width: '100%',
+                    padding: isMobile ? '15px' : '10px',
+                    border: '1px solid #d1c2a3',
+                    borderRadius: '4px',
+                    fontSize: '16px',
+                    backgroundColor: 'transparent',
+                    color: 'white'
+                  }}
+                />
+              </div>
+              <div style={{marginBottom: '10px'}}>
+                <label style={{
+                  display: 'block', 
+                  marginBottom: '5px', 
+                  textAlign: 'left',
+                  fontSize: '24px' }}
+                  >Password:</label>
+                <input
+                  id='passwordInput'
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter password"
+                  style={{
+                    width: '100%',
+                    padding: isMobile ? '15px' : '10px',
+                    border: '1px solid #d1c2a3',
+                    borderRadius: '4px',
+                    fontSize: '16px',
+                    backgroundColor: 'transparent',
+                    color: 'white'
+                  }}
+                />
+              </div>
+              <p hidden={!isError} style={{
+                textAlign: 'center', 
+                color: 'red', 
+                fontSize: '18px', 
+                marginTop: '0px', 
+                marginBottom: '0px'}}
+                >Incorrect ID or Password</p>
+              {isLoading ? (<Spinner/>) : (<button
+                onClick={() => {
+                  onLogin(username, password);
+                  setShowAssignments(false);
+                }}
+                onMouseEnter={() => setLoginHover(true)}
+                onMouseLeave={() => setLoginHover(false)}
+                style={{
+                  width: '150px',
+                  padding: isMobile ? '15px' : '10px',
+                  backgroundColor: loginHover ? '#e0d4b4' : '#d1c2a3',
+                  color: '#5b6476',
+                  fontSize: '16px',
+                  border: 'none',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  marginTop: '10px',
+                  transition: 'background-color 0.3s ease',
+                }}
+              >
+                Login
+              </button>)}
+            </div>
+          </header>
+      </div>
     )}
   </div>
   );
