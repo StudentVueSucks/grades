@@ -229,7 +229,7 @@ function DataPage({
                 endIndex = str.indexOf("/");
             }
             if (str.indexOf("/") !== 0){
-                val = str.substring(0,endIndex);
+                val = parseInt(str.substring(0,endIndex));
             }
         }
         return val;
@@ -238,10 +238,12 @@ function DataPage({
     const getCurPointsPossible = (curPoints) => {
         let val = '';
         let str = curPoints === undefined ? curAssignment.points.trim() : curPoints.trim();
-        for (let i = str.length-1; i > 0; i--){
-            if (str.charAt(i) === " " || str.charAt(i) === "/"){
-                val = str.substring(i+1);
-                break;
+        if (str.indexOf("/") !== -1){
+            for (let i = str.length-1; i > 0; i--){
+                if (str.charAt(i) === " " || str.charAt(i) === "/"){
+                    val = parseInt(str.substring(i+1));
+                    break;
+                }
             }
         }
         return val;

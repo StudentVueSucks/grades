@@ -199,12 +199,14 @@ function App() {
   useEffect(() => {
     const handleKeyPress = async (event) => {
       if (event.key === "Enter") {
-        setUsername(document.getElementById('usernameInput').value);
-        setPassword(document.getElementById('passwordInput').value);
+        if (document.getElementById('usernameInput') !== null && document.getElementById('passwordInput') !== null){
+          setUsername(document.getElementById('usernameInput').value);
+          setPassword(document.getElementById('passwordInput').value);
 
-        await onLogin(document.getElementById('usernameInput').value, 
-        document.getElementById('passwordInput').value);
-        setShowAssignments(false);
+          await onLogin(document.getElementById('usernameInput').value, 
+          document.getElementById('passwordInput').value);
+          setShowAssignments(false);
+        }
       }
     };
 
